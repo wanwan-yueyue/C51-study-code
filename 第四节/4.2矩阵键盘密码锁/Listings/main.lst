@@ -1,0 +1,98 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 17:14:01 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "delay.h"
+   3          #include "LCD1602.h"
+   4          #include "MatrixKey.h"
+   5          
+   6          unsigned char KeyNum = 0;
+   7          unsigned char Count = 0;
+   8          unsigned int Password;
+   9          
+  10          void main(){
+  11   1        
+  12   1        //LCD1602初始化
+  13   1        LCD_Init();
+  14   1        //提示输入密码
+  15   1        LCD_ShowString(1,1,"Enter Password:");
+  16   1        
+  17   1        while(1){
+  18   2          
+  19   2          //将键值读取出
+  20   2          KeyNum = MatrixKey(); 
+  21   2          
+  22   2          if(KeyNum){
+  23   3            //如果S1到S10按键按下，输入密码
+  24   3            if(KeyNum <= 10){
+  25   4              //记录输入次数，避免数据溢出
+  26   4              if(Count < 4){
+  27   5                //密码左移一位
+  28   5                Password *= 10;
+  29   5                //获取一位密码
+  30   5                Password += KeyNum % 10;
+  31   5                
+  32   5                Count++;
+  33   5              }
+  34   4              
+  35   4            }
+  36   3            
+  37   3            //如果S11按下，即确认密码
+  38   3            if(KeyNum == 11){
+  39   4              //设定正确密码
+  40   4              if(Password == 1573){
+  41   5                //表示密码正确
+  42   5                LCD_ShowString(2,14,"OK ");
+  43   5                //密码，计次重新初始化
+  44   5                Password = 0;
+  45   5                Count = 0;
+  46   5              }else{
+  47   5                //密码错误
+  48   5                LCD_ShowString(2,14,"ERR");
+  49   5                //密码，计次重新初始化
+  50   5                Password = 0;
+  51   5                Count = 0;
+  52   5              }
+  53   4              
+  54   4            }
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 17:14:01 PAGE 2   
+
+  55   3            
+  56   3            //如果S12按下，则清零密码（取消键）
+  57   3            if(KeyNum == 12){
+  58   4              //密码，计次重新初始化
+  59   4                Password = 0;
+  60   4                Count = 0;
+  61   4              //更新显示
+  62   4              LCD_ShowNum(2,1,Password,4);
+  63   4            }
+  64   3            
+  65   3            //更新显示
+  66   3            LCD_ShowNum(2,1,Password,4);
+  67   3            
+  68   3          }
+  69   2          
+  70   2        }
+  71   1        
+  72   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    158    ----
+   CONSTANT SIZE    =     24    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

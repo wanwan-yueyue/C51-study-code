@@ -1,0 +1,51 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              07/24/2025 17:46:03 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "delay.h"
+   3          #include "password_input.h"
+   4          
+   5          void main() {
+   6   1          unsigned char Result;
+   7   1          // 初始化密码输入模块
+   8   1          PasswordInput_Init();
+   9   1      
+  10   1          // （可选）设置自定义正确密码（默认是"15*3#790"）
+  11   1          // unsigned char MyCorrectPwd[9] = "88*6#220";
+  12   1          // PasswordInput_SetCorrectPwd(MyCorrectPwd);
+  13   1      
+  14   1          while (1) {
+  15   2              // 运行密码输入主循环，获取结果
+  16   2              Result = PasswordInput_Loop();
+  17   2              
+  18   2              // 可根据验证结果扩展其他功能（示例）
+  19   2              if (Result == 1) {
+  20   3                  // 密码正确：执行开门、解锁等操作
+  21   3                  // 例如：Relay_Open();
+  22   3              } else if (Result == 0) {
+  23   3                  // 密码错误：执行报警、记录等操作
+  24   3                  // 例如：Buzzer_Beep(1);
+  25   3              }
+  26   2          }
+  27   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     14    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
