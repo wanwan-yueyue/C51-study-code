@@ -1,0 +1,259 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    07/25/2025  17:05:05  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_C51\C51\BIN\BL51.EXE .\Objects\main.obj, .\Objects\Timer0.obj, .\Objects\Key.obj, .\Objects\delay.obj TO .\Objec
+>> ts\project PRINT (.\Listings\project.m51) RAMSIZE (256) DISABLEWARNING (16)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  .\Objects\Timer0.obj (TIMER0)
+  .\Objects\Key.obj (KEY)
+  .\Objects\delay.obj (DELAY)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\project (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     0004H     UNIT         ?DT?MAIN
+            DATA    000CH     0001H     UNIT         _DATA_GROUP_
+                    000DH     0013H                  *** GAP ***
+            BIT     0020H.0   0000H.1   UNIT         _BIT_GROUP_
+                    0020H.1   0000H.7                *** GAP ***
+            IDATA   0021H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     07F2H                  *** GAP ***
+            CODE    0800H     0095H     UNIT         ?PR?_SCANSINGLEKEY?KEY
+            CODE    0895H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0921H     0054H     UNIT         ?PR?TIMER0_ROUTINE?MAIN
+            CODE    0975H     0021H     UNIT         ?PR?KEY?KEY
+            CODE    0996H     0020H     UNIT         ?PR?MAIN?MAIN
+            CODE    09B6H     0017H     UNIT         ?PR?TIMER0INIT?TIMER0
+            CODE    09CDH     0016H     UNIT         ?PR?_DELAY1MS?DELAY
+            CODE    09E3H     0007H     UNIT         ?C_INITSEG
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\project (MAIN)
+
+
+SEGMENT                            BIT_GROUP          DATA_GROUP 
+  +--> CALLED SEGMENT           START    LENGTH     START    LENGTH
+-------------------------------------------------------------------
+?C_C51STARTUP                   -----    -----      -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  07/25/2025  17:05:05  PAGE 2
+
+
+?PR?MAIN?MAIN                   -----    -----      -----    -----
+  +--> ?PR?TIMER0INIT?TIMER0
+  +--> ?PR?KEY?KEY
+
+?PR?KEY?KEY                     -----    -----      -----    -----
+  +--> ?PR?_SCANSINGLEKEY?KEY
+
+?PR?_SCANSINGLEKEY?KEY          0020H.0  0000H.1    000CH    0001H
+  +--> ?PR?_DELAY1MS?DELAY
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\project (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0921H         PUBLIC        Timer0_Routine
+  D:00A0H         PUBLIC        P2
+  C:0996H         PUBLIC        main
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  D:000AH         PUBLIC        KeyNum
+  D:000BH         PUBLIC        LEDMode
+  -------         PROC          MAIN
+  C:0996H         LINE#         9
+  C:0996H         LINE#         10
+  C:0999H         LINE#         11
+  C:099CH         LINE#         13
+  C:099CH         LINE#         16
+  C:09A1H         LINE#         18
+  C:09A5H         LINE#         20
+  C:09A8H         LINE#         21
+  C:09AAH         LINE#         22
+  C:09B4H         LINE#         23
+  C:09B4H         LINE#         25
+  C:09B4H         LINE#         27
+  -------         ENDPROC       MAIN
+  -------         PROC          TIMER0_ROUTINE
+  -------         DO            
+  D:0008H         SYMBOL        T0Count
+  -------         ENDDO         
+  C:0921H         LINE#         31
+  C:092CH         LINE#         35
+  C:092FH         LINE#         36
+  C:0932H         LINE#         38
+  C:093AH         LINE#         39
+  C:0943H         LINE#         40
+  C:0949H         LINE#         43
+  C:094DH         LINE#         44
+  C:095AH         LINE#         45
+  C:095AH         LINE#         47
+  C:095FH         LINE#         48
+  C:096CH         LINE#         49
+  C:096CH         LINE#         51
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  07/25/2025  17:05:05  PAGE 3
+
+
+  C:096CH         LINE#         53
+  -------         ENDPROC       TIMER0_ROUTINE
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        TIMER0
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  B:00A8H.7       PUBLIC        EA
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.1       PUBLIC        ET0
+  B:0088H.5       PUBLIC        TF0
+  C:09B6H         PUBLIC        Timer0Init
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:00B8H.1       PUBLIC        PT0
+  B:0088H.4       PUBLIC        TR0
+  -------         PROC          TIMER0INIT
+  C:09B6H         LINE#         10
+  C:09B6H         LINE#         11
+  C:09B6H         LINE#         13
+  C:09B9H         LINE#         14
+  C:09BCH         LINE#         15
+  C:09BFH         LINE#         16
+  C:09C2H         LINE#         17
+  C:09C4H         LINE#         18
+  C:09C6H         LINE#         19
+  C:09C8H         LINE#         20
+  C:09CAH         LINE#         21
+  C:09CCH         LINE#         22
+  -------         ENDPROC       TIMER0INIT
+  -------         ENDMOD        TIMER0
+
+  -------         MODULE        KEY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  B:00B0H.0       PUBLIC        P3_0
+  B:00B0H.1       PUBLIC        P3_1
+  B:00B0H.2       PUBLIC        P3_2
+  B:00B0H.3       PUBLIC        P3_3
+  C:0975H         PUBLIC        Key
+  C:0800H         SYMBOL        _scanSingleKey
+  -------         PROC          _SCANSINGLEKEY
+  D:000CH         SYMBOL        keyIndex
+  -------         DO            
+  B:0020H.0       SYMBOL        pinState
+  -------         ENDDO         
+  C:0800H         LINE#         16
+  C:0802H         LINE#         18
+  C:0804H         LINE#         19
+  C:0814H         LINE#         20
+  C:081AH         LINE#         21
+  C:0820H         LINE#         22
+  C:0826H         LINE#         23
+  C:082AH         LINE#         24
+  C:082AH         LINE#         27
+  C:082DH         LINE#         28
+  C:0834H         LINE#         30
+  C:0844H         LINE#         31
+  C:084AH         LINE#         32
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  07/25/2025  17:05:05  PAGE 4
+
+
+  C:0850H         LINE#         33
+  C:0856H         LINE#         34
+  C:085AH         LINE#         35
+  C:085AH         LINE#         36
+  C:085DH         LINE#         38
+  C:0860H         LINE#         39
+  C:0870H         LINE#         40
+  C:0876H         LINE#         41
+  C:087CH         LINE#         42
+  C:0882H         LINE#         43
+  C:0888H         LINE#         44
+  C:0888H         LINE#         45
+  C:0888H         LINE#         46
+  C:088FH         LINE#         47
+  C:0892H         LINE#         48
+  C:0892H         LINE#         49
+  C:0892H         LINE#         50
+  C:0894H         LINE#         51
+  -------         ENDPROC       _SCANSINGLEKEY
+  -------         PROC          KEY
+  -------         DO            
+  D:0007H         SYMBOL        keyValue
+  -------         ENDDO         
+  C:0975H         LINE#         57
+  C:0975H         LINE#         58
+  C:0977H         LINE#         61
+  C:0979H         LINE#         62
+  C:097DH         LINE#         63
+  C:097DH         LINE#         64
+  C:0980H         LINE#         65
+  C:0985H         LINE#         66
+  C:0985H         LINE#         67
+  C:0988H         LINE#         68
+  C:098DH         LINE#         69
+  C:098DH         LINE#         70
+  C:0990H         LINE#         71
+  C:0995H         LINE#         72
+  C:0995H         LINE#         74
+  C:0995H         LINE#         75
+  -------         ENDPROC       KEY
+  -------         ENDMOD        KEY
+
+  -------         MODULE        DELAY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:09CDH         PUBLIC        _Delay1ms
+  -------         PROC          _DELAY1MS
+  D:0006H         SYMBOL        xms
+  -------         DO            
+  D:0005H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:09CDH         LINE#         9
+  C:09CDH         LINE#         10
+  C:09CDH         LINE#         12
+  C:09D7H         LINE#         13
+  C:09D7H         LINE#         14
+  C:09D8H         LINE#         15
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  07/25/2025  17:05:05  PAGE 5
+
+
+  C:09DAH         LINE#         16
+  C:09DCH         LINE#         18
+  C:09DCH         LINE#         19
+  C:09DEH         LINE#         20
+  C:09E0H         LINE#         21
+  C:09E2H         LINE#         22
+  -------         ENDPROC       _DELAY1MS
+  -------         ENDMOD        DELAY
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0160H BYTE (17%) *
+******************************************************************************
+
+Program Size: data=14.1 xdata=0 code=496
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

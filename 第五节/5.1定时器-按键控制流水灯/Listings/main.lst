@@ -1,0 +1,79 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              07/25/2025 17:01:46 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <INTRINS.H>
+   3          #include "Timer0.h"
+   4          #include "Key.h"
+   5          
+   6          unsigned char KeyNum = 0;
+   7          unsigned char LEDMode = 0;
+   8          
+   9          void main(){
+  10   1        P2 = 0xFE;
+  11   1        Timer0Init(); //定时器初始化
+  12   1        
+  13   1        while(1){
+  14   2          
+  15   2          //获取按键键码
+  16   2          KeyNum = Key();
+  17   2          
+  18   2          if(KeyNum){
+  19   3            //键码值为1时（K1按下）
+  20   3            if(KeyNum == 1){
+  21   4              LEDMode++;
+  22   4              if(LEDMode >= 2) LEDMode = 0;
+  23   4            }
+  24   3            
+  25   3          }
+  26   2          
+  27   2        }
+  28   1        
+  29   1      }
+  30          
+  31          void Timer0_Routine() interrupt 1{
+  32   1        static unsigned int T0Count;
+  33   1        
+  34   1        //重新赋初值保证计时为1us
+  35   1        TL0 = 0x66;       //设置定时初始值
+  36   1        TH0 = 0xFC;       //设置定时初始值
+  37   1        
+  38   1        T0Count++;
+  39   1        if (T0Count >= 500){
+  40   2          T0Count = 0; //初始化计数
+  41   2          
+  42   2          //模式0,左移
+  43   2          if(LEDMode == 0){
+  44   3            P2 = _crol_(P2,1);
+  45   3          }
+  46   2          //模式1,右移
+  47   2          if(LEDMode == 1){
+  48   3            P2 = _cror_(P2,1);
+  49   3          }
+  50   2          
+  51   2        }
+  52   1        
+  53   1      }
+
+C51 COMPILER V9.60.7.0   MAIN                                                              07/25/2025 17:01:46 PAGE 2   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    116    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
