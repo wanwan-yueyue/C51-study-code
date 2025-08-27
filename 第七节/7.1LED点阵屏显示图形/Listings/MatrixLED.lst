@@ -1,0 +1,85 @@
+C51 COMPILER V9.60.7.0   MATRIXLED                                                         07/27/2025 12:29:20 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MATRIXLED
+OBJECT MODULE PLACED IN .\Objects\MatrixLED.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE MatrixLED.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listing
+                    -s\MatrixLED.lst) TABS(2) OBJECT(.\Objects\MatrixLED.obj)
+
+line level    source
+
+   1          #include "MatrixLED.h"
+   2          #include "delay.h"
+   3          
+   4          /**
+   5           * @brief  初始化点阵屏
+   6           * @param  无
+   7           * @retval 无
+   8           */
+   9          void MatrixLED_Init(void)
+  10          {
+  11   1          SCK = 0;
+  12   1          RCK = 0;
+  13   1      }
+  14          
+  15          /**
+  16           * @brief  向74HC595写入一个字节
+  17           * @param  Byte 要写入的字节
+  18           * @retval 无
+  19           */
+  20          void MatrixLED_WriteByte(unsigned char Byte)
+  21          {
+  22   1          unsigned char i;
+  23   1          for(i = 0; i < 8; i++)
+  24   1          {
+  25   2              SER = Byte & (0x80 >> i);  // 取出当前位数据
+  26   2              SCK = 1;                   // 移位时钟线拉高，数据移入
+  27   2              SCK = 0;                   // 移位时钟线拉低，准备下一次移位
+  28   2          }
+  29   1          RCK = 1;                       // 存储时钟线拉高，数据输出
+  30   1          RCK = 0;                       // 存储时钟线拉低，准备下一次输出
+  31   1      }
+  32          
+  33          /**
+  34           * @brief  显示点阵屏的一列数据
+  35           * @param  Column 列号，范围0-7，0为最左边
+  36           * @param  Data 列数据，高位在上，低位在下，1为亮，0为灭
+  37           * @retval 无
+  38           */
+  39          void MatrixLED_ShowColumn(unsigned char Column, unsigned char Data)
+  40          {
+  41   1          MatrixLED_WriteByte(Data);               // 写入列数据
+  42   1          MATRIX_LED_PORT = ~(0x80 >> Column);     // 选择列（低电平有效）
+  43   1          Delay1ms(1);                             // 延时1ms，保证亮度
+  44   1          MATRIX_LED_PORT = 0xFF;                  // 关闭所有列，防止串扰
+  45   1      }
+  46          
+  47          /**
+  48           * @brief  显示一帧完整的点阵图像
+  49           * @param  Frame 指向图像数据的指针，包含8个字节，每个字节代表一列
+  50           * @retval 无
+  51           */
+  52          void MatrixLED_ShowFrame(unsigned char *Frame)
+  53          {
+  54   1          unsigned char i;
+C51 COMPILER V9.60.7.0   MATRIXLED                                                         07/27/2025 12:29:20 PAGE 2   
+
+  55   1          for(i = 0; i < 8; i++)
+  56   1          {
+  57   2              MatrixLED_ShowColumn(i, Frame[i]);
+  58   2          }
+  59   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    126    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       4
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

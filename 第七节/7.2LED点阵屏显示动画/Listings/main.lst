@@ -1,0 +1,82 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              07/27/2025 22:14:21 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "MatrixLED.h"
+   3          
+   4          // 示例方式1：单帧图像数据(笑脸)
+   5          unsigned char code SmileFrame[] = {
+   6              0x3C, 0x42, 0xA9, 0x85,
+   7              0x85, 0xA9, 0x42, 0x3C
+   8          };
+   9          
+  10          // 示例方式2：动画数据(3帧)
+  11          unsigned char code Animation[] = {
+  12              // 帧1
+  13              0x3C, 0x42, 0xA9, 0x85, 0x85, 0xA9, 0x42, 0x3C,
+  14              // 帧2
+  15              0x3C, 0x42, 0xA1, 0x85, 0x85, 0xA1, 0x42, 0x3C,
+  16              // 帧3
+  17              0x3C, 0x42, 0xA5, 0x89, 0x89, 0xA5, 0x42, 0x3C
+  18          };
+  19          
+  20          unsigned char code String_Animations[] = {
+  21            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  22            0xff, 0x08, 0x08, 0x08, 0xff, 0x00, 0x0e, 0x15,
+  23            0x15, 0x15, 0x08, 0x00, 0x7e, 0x01, 0x02, 0x00,
+  24            0x7e, 0x01, 0x02, 0x00, 0x0e, 0x11, 0x11, 0x0e,
+  25            0x00, 0x7d, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  26            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+  27          };
+  28          void main(void)
+  29          {
+  30   1          unsigned char i, Offset = 0, Count = 0;
+  31   1          
+  32   1          MatrixLED_Init();  // 初始化点阵屏
+  33   1          
+  34   1          while(1)
+  35   1          {
+  36   2              // 方式1：显示单帧图像
+  37   2              // MatrixLED_ShowFrame(SmileFrame);
+  38   2              
+  39   2              // 方式2：播放动画(动画数据, 帧数, 速度)
+  40   2              MatrixLED_PlayAnimation(Animation, 3, 15);
+  41   2            
+  42   2              //方式三：滚动播放文本
+  43   2      //        for(i = 0; i < 8; i++){
+  44   2      //            MatrixLED_ShowColumn(i, String_Animations[i + Offset]);
+  45   2      //        }
+  46   2      //        Count++;
+  47   2      //        if(Count > 10){
+  48   2      //            Count = 0;
+  49   2      //            Offset++;
+  50   2      //            if(Offset > 40){
+  51   2      //                Offset = 0;
+  52   2      //            }
+  53   2      //        }
+  54   2          }
+C51 COMPILER V9.60.7.0   MAIN                                                              07/27/2025 22:14:21 PAGE 2   
+
+  55   1      }
+*** WARNING C280 IN LINE 30 OF main.c: 'i': unreferenced local variable
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     27    ----
+   CONSTANT SIZE    =     80    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       3
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
