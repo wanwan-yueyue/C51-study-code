@@ -1,0 +1,268 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/02/2025 08:52:34 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "LCD1602.h"    // LCD1602显示屏驱动库
+   3          #include "DS1302.h"     // DS1302实时时钟芯片驱动库
+   4          #include "Key.h"        // 按键扫描驱动库
+   5          #include "Timer0.h"     // 定时器0驱动库
+   6          
+   7          // 全局变量定义
+   8          unsigned char KeyNum;           // 存储按键编号
+   9          unsigned char MODE = 0;         // 工作模式：0-显示模式（正常显示时间），1-设置模式�
+             -��可调整时间）
+  10          unsigned char TimeSetSelect = 0;// 设置模式下选中的时间单位（0-年，1-月，2-日，3-时，
+             -4-分，5-秒）
+  11          bit TimeSetFlashFlag = 0; // 闪烁标志（0-不闪烁，1-闪烁，用于设置模式下选中项的闪�
+             -��效果）
+  12          
+  13          
+  14          // 时间单位在LCD上的显示位置（行,列）
+  15          // 对应顺序：[0]年，[1]月，[2]日，[3]时，[4]分，[5]秒
+  16          unsigned char code TimePos[6][2] = {{1,1}, {1,4}, {1,7}, {2,1}, {2,4}, {2,7}};
+  17          
+  18          // 上电默认时间设置（每次上电后强制初始化的时间）
+  19          // 格式：{年, 月, 日, 时, 分, 秒}，年份为20xx年后两位（如23表示2023年）
+  20          unsigned char code DEFAULT_TIME[6] = {25, 8, 2, 0, 0, 0}; // 默认2025年8月2日 00:00:00
+  21          
+  22          
+  23          /**
+  24           * @brief   判断是否为闰年（针对20xx年，简化判断：能被4整除即为闰年）
+  25           * @param   year: 年份（20xx年后两位，如23表示2023年）
+  26           * @retval  1-是闰年，0-不是闰年
+  27           */
+  28          bit isLeapYear(unsigned char year) {
+  29   1          return (year % 4 == 0);  // 能被4整除即为闰年
+  30   1      }
+  31          
+  32          
+  33          /**
+  34           * @brief   获取当月的最大天数（根据年份和月份判断）
+  35           * @param   year: 年份（20xx年后两位）
+  36           * @param   month: 月份（1-12）
+  37           * @retval  当月的最大天数（28/29/30/31）
+  38           */
+  39          unsigned char getMaxDay(unsigned char year, unsigned char month) {
+  40   1          switch(month) {
+  41   2              case 1: case 3: case 5: case 7: case 8: case 10: case 12:
+  42   2                  return 31;  // 大月（1/3/5/7/8/10/12月有31天）
+  43   2              case 4: case 6: case 9: case 11:
+  44   2                  return 30;  // 小月（4/6/9/11月有30天）
+  45   2              case 2:
+  46   2                  // 2月：闰年29天，平年28天
+  47   2                  return isLeapYear(year) ? 29 : 28;
+  48   2              default:
+  49   2                  return 31;  // 月份不合法时默认31天（容错处理）
+  50   2          }
+  51   1      }
+C51 COMPILER V9.60.7.0   MAIN                                                              08/02/2025 08:52:34 PAGE 2   
+
+  52          
+  53          
+  54          /**
+  55           * @brief   更新时间显示（处理设置模式下选中项的闪烁效果）
+  56           * @note    遍历所有时间单位，根据模式和闪烁标志决定显示数字或空白（实现闪�
+             -��）
+  57           */
+  58          void UpdateTimeDisplay() {
+  59   1          unsigned char i;
+  60   1          for(i = 0; i < 6; i++) {  // 遍历6个时间单位（年到秒）
+  61   2              // 若当前为设置模式，且是选中项，且闪烁标志为1，则显示空白（实现闪�
+             -��）
+  62   2              if((i == TimeSetSelect) && (TimeSetFlashFlag != 0) && MODE == 1) {
+  63   3                  LCD_ShowString(TimePos[i][0], TimePos[i][1], "  "); 
+  64   3              } else {
+  65   3                  // 否则显示对应时间值（2位数字，不足补0）
+  66   3                  LCD_ShowNum(TimePos[i][0], TimePos[i][1], DS1302_Time[i], 2);
+  67   3              }
+  68   2          }
+  69   1      }
+  70          
+  71          
+  72          /**
+  73           * @brief   时间显示函数（显示模式下调用）
+  74           * @note    从DS1302读取当前时间，然后调用UpdateTimeDisplay刷新LCD显示
+  75           */
+  76          void TimeShow(void) {
+  77   1          DS1302_ReadTime();  // 从DS1302芯片读取最新时间到DS1302_Time数组
+  78   1          UpdateTimeDisplay();  // 刷新LCD显示（无闪烁）
+  79   1      }
+  80          
+  81          
+  82          /**
+  83           * @brief   调整时间的通用函数（设置模式下调整选中的时间单位）
+  84           * @param   step: 调整步长（+1-增加，-1-减少）
+  85           * @note    根据选中的时间单位（年/月/日/时/分/秒）处理边界值（如小时最大23）
+  86           */
+  87          void adjustTime(char step) {
+  88   1          unsigned char maxDay;  // 用于存储当月最大天数
+  89   1          
+  90   1          // 调整选中的时间单位
+  91   1          DS1302_Time[TimeSetSelect] = DS1302_Time[TimeSetSelect] + step;
+  92   1          
+  93   1          // 根据选中的时间单位处理边界值
+  94   1          switch(TimeSetSelect) {
+  95   2              case 0:  // 调整年份
+  96   2                  if(DS1302_Time[0] > 99) DS1302_Time[0] = 0;  
+  97   2                  if(DS1302_Time[0] < 0) DS1302_Time[0] = 99;  
+  98   2                  // 年份变化可能影响2月天数，需检查日期是否合法
+  99   2                  if(DS1302_Time[2] > getMaxDay(DS1302_Time[0], DS1302_Time[1])) {
+ 100   3                      DS1302_Time[2] = getMaxDay(DS1302_Time[0], DS1302_Time[1]);
+ 101   3                  }
+ 102   2                  break;
+ 103   2                  
+ 104   2              case 1:  // 调整月份
+ 105   2                  if(DS1302_Time[1] > 12) DS1302_Time[1] = 1;  
+ 106   2                  if(DS1302_Time[1] < 1) DS1302_Time[1] = 12;  
+ 107   2                  // 月份变化可能影响当月天数，需检查日期是否合法
+ 108   2                  if(DS1302_Time[2] > getMaxDay(DS1302_Time[0], DS1302_Time[1])) {
+ 109   3                      DS1302_Time[2] = getMaxDay(DS1302_Time[0], DS1302_Time[1]);
+ 110   3                  }
+ 111   2                  break;
+C51 COMPILER V9.60.7.0   MAIN                                                              08/02/2025 08:52:34 PAGE 3   
+
+ 112   2                  
+ 113   2              case 2:  // 调整日期
+ 114   2                  maxDay = getMaxDay(DS1302_Time[0], DS1302_Time[1]);  
+ 115   2                  if(DS1302_Time[2] > maxDay) DS1302_Time[2] = 1;     
+ 116   2                  if(DS1302_Time[2] < 1) DS1302_Time[2] = maxDay;     
+ 117   2                  break;
+ 118   2                  
+ 119   2              case 3:  // 调整小时
+ 120   2                  if(DS1302_Time[3] > 23) DS1302_Time[3] = 0; 
+ 121   2                  if(DS1302_Time[3] < 0) DS1302_Time[3] = 23;  
+ 122   2                  break;
+ 123   2                  
+ 124   2              case 4:  // 调整分钟
+ 125   2                  if(DS1302_Time[4] > 59) DS1302_Time[4] = 0; 
+ 126   2                  if(DS1302_Time[4] < 0) DS1302_Time[4] = 59;  
+ 127   2                  break;
+ 128   2                  
+ 129   2              case 5:  // 调整秒钟
+ 130   2                  if(DS1302_Time[5] > 59) DS1302_Time[5] = 0; 
+ 131   2                  if(DS1302_Time[5] < 0) DS1302_Time[5] = 59;  
+ 132   2                  break;
+ 133   2          }
+ 134   1          
+ 135   1          UpdateTimeDisplay();  // 调整后立即刷新显示（实时反馈调整结果）
+ 136   1      }
+ 137          
+ 138          
+ 139          /**
+ 140           * @brief   时间设置函数（设置模式下调用，处理按键逻辑）
+ 141           * @note    根据按键编号（K2/K3/K4）执行对应操作：切换选中项/增加/减少
+ 142           */
+ 143          void TimeSet(void) {
+ 144   1          if(KeyNum == 2) {  // K2按键：切换选中的时间单位（年→月→日→时→分→秒循环
+             -）
+ 145   2              if(++TimeSetSelect>=6) TimeSetSelect=0;
+ 146   2          } 
+ 147   1          else if(KeyNum == 3) {  // K3按键：增加当前选中的时间单位
+ 148   2              adjustTime(1);  // 调用调整函数，步长+1
+ 149   2          } 
+ 150   1          else if(KeyNum == 4) {  // K4按键：减少当前选中的时间单位
+ 151   2              adjustTime(-1);  // 调用调整函数，步长-1
+ 152   2          }
+ 153   1      }
+ 154          
+ 155          
+ 156          /**
+ 157           * @brief   主函数（程序入口）
+ 158           * @note    初始化硬件→设置上电默认时间→进入主循环（处理按键和模式切换）
+ 159           */
+ 160          void main(){
+ 161   1          unsigned char i;  // 循环变量（用于初始化默认时间）
+ 162   1          
+ 163   1          // 硬件初始化
+ 164   1          LCD_Init();        // 初始化LCD1602显示屏
+ 165   1          DS1302_Init();     // 初始化DS1302实时时钟芯片
+ 166   1          Timer0Init();      // 初始化定时器0（用于控制闪烁频率）
+ 167   1          EA = 1;            // 使能总中断（确保定时器0中断能正常触发）
+ 168   1          
+ 169   1          // 初始化LCD上的分隔符（格式化显示格式）
+ 170   1          LCD_ShowString(1,3,"-");  
+ 171   1          LCD_ShowString(1,6,"-");  
+ 172   1          LCD_ShowString(2,3,":");  
+C51 COMPILER V9.60.7.0   MAIN                                                              08/02/2025 08:52:34 PAGE 4   
+
+ 173   1          LCD_ShowString(2,6,":");  
+ 174   1          
+ 175   1          // 上电强制设置默认时间（核心逻辑：每次上电覆盖DS1302原有数据）
+ 176   1          for(i = 0; i < 6; i++) {
+ 177   2              DS1302_Time[i] = DEFAULT_TIME[i];  // 将默认时间复制到时间数组
+ 178   2          }
+ 179   1          DS1302_SetTime();  // 将时间数组中的默认时间写入DS1302芯片（永久保存）
+ 180   1          
+ 181   1          // 主循环
+ 182   1          while(1){
+ 183   2              KeyNum = Key();  // 读取按键状态
+ 184   2              
+ 185   2              // K1按键：切换工作模式（显示模式↔设置模式）
+ 186   2              if(KeyNum == 1) {
+ 187   3                  if(MODE == 0) {  // 当前是显示模式→切换到设置模式
+ 188   4                      MODE = 1;                // 模式切换为设置模式
+ 189   4                      TimeSetSelect = 0;       // 初始选中"年"
+ 190   4                      DS1302_ReadTime();       // 从DS1302读取当前时间到数组（作为调整基准）
+ 191   4                  } else {  // 当前是设置模式→切换到显示模式
+ 192   4                      MODE = 0;                // 模式切换为显示模式
+ 193   4                      DS1302_SetTime();        // 将调整后的时间写入DS1302（保存设置结果）
+ 194   4                  }
+ 195   3              }
+ 196   2              
+ 197   2              // 根据当前模式执行对应功能
+ 198   2              switch(MODE) {
+ 199   3                  case 0:  // 显示模式：正常显示时间（从DS1302实时读取）
+ 200   3                      TimeShow();
+ 201   3                      break;
+ 202   3                  case 1:  // 设置模式：处理按键调整，并刷新显示（带闪烁效果）
+ 203   3                      TimeSet();          // 处理按键（切换选中项/增减）
+ 204   3                      UpdateTimeDisplay();// 刷新显示（含闪烁效果）
+ 205   3                      break;
+ 206   3              }
+ 207   2              
+ 208   2              KeyNum = 0;  // 清除按键状态（避免一次按键被重复处理）
+ 209   2          }
+ 210   1      }
+ 211          
+ 212          
+ 213          /**
+ 214           * @brief   定时器0中断服务函数（用于控制设置模式下的闪烁频率）
+ 215           * @note    每500ms翻转一次闪烁标志，使选中项交替显示数字和空白（实现闪烁）
+ 216           */
+ 217          void Timer0_Routine() interrupt 1{
+ 218   1          static unsigned int T0Count = 0;  // 静态变量，用于计数（记录中断次数）
+ 219   1          
+ 220   1          // 重装载定时器0初值（确保每次中断间隔1ms，因初始化时已配置为1ms中断一�
+             -�）
+ 221   1          TL0 = 0x66;  
+ 222   1          TH0 = 0xFC;
+ 223   1          
+ 224   1          // 每500ms翻转一次闪烁标志（1ms×500=500ms）
+ 225   1          if(++T0Count >= 500) {  
+ 226   2              T0Count = 0;                // 计数清零
+ 227   2              TimeSetFlashFlag = !TimeSetFlashFlag;  // 翻转闪烁标志（0→1或1→0）
+ 228   2          }
+ 229   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    628    ----
+C51 COMPILER V9.60.7.0   MAIN                                                              08/02/2025 08:52:34 PAGE 5   
+
+   CONSTANT SIZE    =     25    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

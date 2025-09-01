@@ -1,0 +1,101 @@
+C51 COMPILER V9.60.7.0   KEY                                                               08/01/2025 21:22:31 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE KEY
+OBJECT MODULE PLACED IN .\Objects\Key.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE Key.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\Key.
+                    -lst) TABS(2) OBJECT(.\Objects\Key.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "delay.h"
+   3          
+   4          // 定义按键引脚
+   5          #define KEY1 P3_1
+   6          #define KEY2 P3_0
+   7          #define KEY3 P3_2
+   8          #define KEY4 P3_3
+   9          
+  10          /**
+  11           * 功能：扫描单个按键状态（通过函数参数区分不同按键）
+  12           * 参数：
+  13           *   keyIndex：按键编号（1-4，对应K1-K4）
+  14           * 返回：按键按下时返回对应编号，否则返回0
+  15           */
+  16          static unsigned char scanSingleKey(unsigned char keyIndex) {
+  17   1          // 根据按键编号判断对应引脚状态
+  18   1          bit pinState = 1;  // 默认为高电平（未按下）
+  19   1          switch(keyIndex) {
+  20   2              case 1: pinState = KEY1; break;  // 读取K1引脚
+  21   2              case 2: pinState = KEY2; break;  // 读取K2引脚
+  22   2              case 3: pinState = KEY3; break;  // 读取K3引脚
+  23   2              case 4: pinState = KEY4; break;  // 读取K4引脚
+  24   2          }
+  25   1      
+  26   1          // 按键按下检测（引脚为低电平）
+  27   1          if (pinState == 0) {
+  28   2              Delay1ms(20);  // 消抖
+  29   2              // 再次检测确认按下
+  30   2              switch(keyIndex) {
+  31   3                  case 1: pinState = KEY1; break;
+  32   3                  case 2: pinState = KEY2; break;
+  33   3                  case 3: pinState = KEY3; break;
+  34   3                  case 4: pinState = KEY4; break;
+  35   3              }
+  36   2              if (pinState == 0) {
+  37   3                  // 等待按键释放
+  38   3                  while(pinState == 0) {
+  39   4                      switch(keyIndex) {
+  40   5                          case 1: pinState = KEY1; break;
+  41   5                          case 2: pinState = KEY2; break;
+  42   5                          case 3: pinState = KEY3; break;
+  43   5                          case 4: pinState = KEY4; break;
+  44   5                      }
+  45   4                  }
+  46   3                  Delay1ms(20);  // 释放后消抖
+  47   3                  return keyIndex;  // 返回按键编号
+  48   3              }
+  49   2          }
+  50   1          return 0;  // 未按下返回0
+  51   1      }
+  52          
+  53          /**
+  54           * 功能：获取独立按键键值
+C51 COMPILER V9.60.7.0   KEY                                                               08/01/2025 21:22:31 PAGE 2   
+
+  55           * 返回：1-4（对应K1-K4），无按键按下返回0
+  56           */
+  57          unsigned char Key() {
+  58   1          unsigned char keyValue = 0;
+  59   1      
+  60   1          // 依次扫描4个按键（避免同时按下时冲突，优先识别先扫描的按键）
+  61   1          if (keyValue == 0) {
+  62   2              keyValue = scanSingleKey(1);  // 扫描K1
+  63   2          }
+  64   1          if (keyValue == 0) {
+  65   2              keyValue = scanSingleKey(2);  // 扫描K2
+  66   2          }
+  67   1          if (keyValue == 0) {
+  68   2              keyValue = scanSingleKey(3);  // 扫描K3
+  69   2          }
+  70   1          if (keyValue == 0) {
+  71   2              keyValue = scanSingleKey(4);  // 扫描K4
+  72   2          }
+  73   1      
+  74   1          return keyValue;
+  75   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    182    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----       1
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----       1
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
