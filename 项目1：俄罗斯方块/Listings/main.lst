@@ -1,0 +1,595 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Timer0.h"
+   3          #include "NonBlockKey.h"
+   4          #include "MatrixLED.h"
+   5          #include "delay.h"
+   6          #include "score.h"
+   7          #include "stdlib.h"
+   8          
+   9          //点阵屏参数：8*8
+  10          #define GAME_WIDTH    8   //8列
+  11          #define GAME_HEIGHT   8   //8行
+  12          
+  13          //方块状态、形状数组
+  14          //格式：[形状类型][旋转状态][行][列]
+  15          unsigned char code Block[4][4][3][3] = {
+  16              //1.单点方块
+  17              {
+  18                //r0
+  19               {
+  20                {0,0,0},
+  21                {0,1,0},
+  22                {0,0,0}
+  23               },
+  24                //r90
+  25               {
+  26                {0,0,0},
+  27                {0,1,0},
+  28                {0,0,0}
+  29               },
+  30                //r180
+  31               {
+  32                {0,0,0},
+  33                {0,1,0},
+  34                {0,0,0}
+  35               },
+  36                //r270
+  37               {
+  38                {0,0,0},
+  39                {0,1,0},
+  40                {0,0,0}
+  41               },
+  42              },
+  43              
+  44              //2.双点方块
+  45              {
+  46                //r0
+  47               {
+  48                {0,0,0},
+  49                {1,1,0},
+  50                {0,0,0}
+  51               },
+  52                //r90
+  53               {
+  54                {0,1,0},
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 2   
+
+  55                {0,1,0},
+  56                {0,0,0}
+  57               },
+  58                //r180
+  59               {
+  60                {0,0,0},
+  61                {0,1,1},
+  62                {0,0,0}
+  63               },
+  64                //r270
+  65               {
+  66                {0,0,0},
+  67                {0,1,0},
+  68                {0,1,0}
+  69               },
+  70              },
+  71              
+  72              //3.L形三点方块
+  73              {
+  74                //r0
+  75               {
+  76                {0,1,0},
+  77                {0,1,1},
+  78                {0,0,0}
+  79               },
+  80                //r90
+  81               {
+  82                {0,0,0},
+  83                {0,1,1},
+  84                {0,1,0}
+  85               },
+  86                //r180
+  87               {
+  88                {0,0,0},
+  89                {1,1,0},
+  90                {0,1,0}
+  91               },
+  92                //r270
+  93               {
+  94                {0,1,0},
+  95                {1,1,0},
+  96                {0,0,0}
+  97               },
+  98              },
+  99              
+ 100              //4.T形四点方块
+ 101              {
+ 102                //r0
+ 103               {
+ 104                {0,1,0},
+ 105                {1,1,1},
+ 106                {0,0,0}
+ 107               },
+ 108                //r90
+ 109               {
+ 110                {0,1,0},
+ 111                {0,1,1},
+ 112                {0,1,0}
+ 113               },
+ 114                //r180
+ 115               {
+ 116                {0,0,0},
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 3   
+
+ 117                {1,1,1},
+ 118                {0,1,0}
+ 119               },
+ 120                //r270
+ 121               {
+ 122                {0,1,0},
+ 123                {1,1,0},
+ 124                {0,1,0}
+ 125               },
+ 126              }
+ 127          
+ 128          };
+ 129          
+ 130          //游戏状态变量
+ 131          //1.标志类变量
+ 132          bit isGameOver = 0;                                                 //游戏结束标志
+ 133          bit isPaused = 0;                                                   //游戏暂停标志
+ 134          bit blockFallFlag = 0;                                              //方块下落标志
+ 135          bit gameOverAnimState = 0;                                          //游戏结束动画状态
+ 136          //2.参数类变量
+ 137          unsigned char gameArea[GAME_WIDTH + 1][GAME_HEIGHT + 1] = {0};      //游戏区域参数（0：空，1：方�
+             -��）
+ 138          unsigned char curBlockType;                                         //当前方块类型（0-3）
+ 139          unsigned char curRotate;                                            //当前方块旋转类型（0-3）
+ 140          unsigned char curX, curY;                                           //当前方块坐标
+ 141          unsigned char nextBlockType;                                        //下一个方块类型
+ 142          unsigned char newY, newX;                                           //更新后的方块坐标
+ 143          unsigned char key;                                                  //读取按键键码
+ 144          unsigned int gameOverAnimCount = 0;                                 //游戏结束动画计数器
+ 145          
+ 146          
+ 147          /**
+ 148           * @brief  初始化游戏状态
+ 149           * @param  无
+ 150           * @retval 无
+ 151           */
+ 152          void GameInit(){
+ 153   1          unsigned char col, row;
+ 154   1          isGameOver = 0;
+ 155   1          isPaused = 0;
+ 156   1          gameOverAnimCount = 0;
+ 157   1          gameOverAnimState = 0;
+ 158   1          Score_Init();       //积分系统初始化
+ 159   1          Timer0Init();       //定时器初始化
+ 160   1          MatrixLED_Init();   //8*8点阵屏初始化
+ 161   1          srand(TH0);         //以定时器初始值作为随机数种子
+ 162   1          
+ 163   1          //清空游戏区域
+ 164   1          for(col = 0; col < GAME_WIDTH; col++){
+ 165   2              for(row = 0; row < GAME_HEIGHT; row++){
+ 166   3                  gameArea[col][row] = 0;
+ 167   3              }
+ 168   2          }
+ 169   1          
+ 170   1          //初始化方块生成
+ 171   1          curBlockType = rand() % 4;
+ 172   1          curRotate = rand() % 4;
+ 173   1          curX = 3;     //X初值
+ 174   1          curY = 7;     //Y初值
+ 175   1          nextBlockType = rand() % 4;
+ 176   1      }
+ 177          
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 4   
+
+ 178          /**
+ 179           * @brief  绘制游戏画面
+ 180           * @param  无
+ 181           * @retval 无
+ 182           */
+ 183          void DrawGame(){
+ 184   1          unsigned char frame[8] = {0};  //帧缓存，8列，每列1字节（bit7=最上行，bit0=最下行）
+ 185   1          unsigned char col, row, r, c, realCol, realRow;
+ 186   1          
+ 187   1          //1.绘制游戏区域中已固定的方块
+ 188   1          for(col = 0; col < GAME_WIDTH; col++){
+ 189   2              for(row = 0; row < GAME_HEIGHT; row++){
+ 190   3                  if(gameArea[col][row] == 1){
+ 191   4                      //行号row对应bit位（row=0→bit0，row=7→bit7），置1表示点亮
+ 192   4                      frame[col] |= (1 << row);
+ 193   4                  }
+ 194   3              }
+ 195   2          }
+ 196   1          
+ 197   1          //2.绘制当前活动方块（3x3矩阵）
+ 198   1          for(r = 0; r < 3; r++){  //遍历方块的3行
+ 199   2              for(c = 0; c < 3; c++){  //遍历方块的3列
+ 200   3                  //若方块当前位置有像素（1表示有方块）
+ 201   3                  if(Block[curBlockType][curRotate][r][c] == 1){
+ 202   4                      //计算实际坐标（以方块中心为基准偏移，3x3矩阵中心在(1,1)）
+ 203   4                      realCol = curX + (c - 1);  //列坐标：当前列 + 列偏移
+ 204   4                      realRow = curY + (r - 1);  //行坐标：当前行 + 行偏移
+ 205   4                      
+ 206   4                      //确保坐标在8x8点阵范围内（防止越界）
+ 207   4                      if(realCol < GAME_WIDTH && realRow < GAME_HEIGHT){
+ 208   5                          frame[realCol] |= (1 << realRow);  //点亮对应像素
+ 209   5                      }
+ 210   4                  }
+ 211   3              }
+ 212   2          }
+ 213   1          
+ 214   1          //3.显示最终帧缓存
+ 215   1          MatrixLED_ShowFrame(frame);
+ 216   1      }
+ 217          
+ 218          /**
+ 219           * @brief  检测方块移动到目标位置是否碰撞
+ 220           * @param  x 目标X坐标
+ 221           * @param  y 目标Y坐标
+ 222           * @retval 1-碰撞，0-无碰撞
+ 223           */
+ 224          bit CheckCollision(unsigned char x, unsigned char y){
+ 225   1          unsigned char r, c;
+ 226   1          for(r = 0; r < 3; r++){  //遍历方块3x3矩阵
+ 227   2              for(c = 0; c < 3; c++){
+ 228   3                  if(Block[curBlockType][curRotate][r][c] == 1){  //方块当前位置有像素
+ 229   4                      unsigned char realCol = x + (c - 1);  //计算实际列坐标
+ 230   4                      unsigned char realRow = y + (r - 1);  //计算实际行坐标
+ 231   4                      
+ 232   4                      //检测是否超出左右边界（列0-7）
+ 233   4                      if(realCol >= GAME_WIDTH || realCol < 0){
+ 234   5                          return 1;  //超出边界，碰撞
+ 235   5                      }
+ 236   4                      
+ 237   4                      //检测是否超出下边界（行0-7），允许超出上边界
+ 238   4                      if(realRow > GAME_HEIGHT){
+ 239   5                          return 1;  //超出下边界，碰撞
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 5   
+
+ 240   5                      }
+ 241   4                      
+ 242   4                      //只有当行坐标在有效范围内时，才检测与已固定方块的碰撞
+ 243   4                      if(realRow >= 0 && gameArea[realCol][realRow] == 1){
+ 244   5                          return 1;  //重叠，碰撞
+ 245   5                      }
+ 246   4                  }
+ 247   3              }
+ 248   2          }
+ 249   1          return 0;  //无碰撞
+ 250   1      }
+ 251          
+ 252          /**
+ 253           * @brief  将当前活动方块固定到游戏区域
+ 254           * @param  无
+ 255           * @retval 无
+ 256           */
+ 257          void FixBlock(){
+ 258   1          unsigned char r, c;
+ 259   1          for(r = 0; r < 3; r++){
+ 260   2              for(c = 0; c < 3; c++){
+ 261   3                  if(Block[curBlockType][curRotate][r][c] == 1){
+ 262   4                      unsigned char realCol = curX + (c - 1);
+ 263   4                      unsigned char realRow = curY + (r - 1);
+ 264   4                      //在有效区域内固定方块
+ 265   4                      if(realCol < GAME_WIDTH && realRow < GAME_HEIGHT){
+ 266   5                          gameArea[realCol][realRow] = 1;  //标记为固定方块
+ 267   5                      }
+ 268   4                  }
+ 269   3              }
+ 270   2          }
+ 271   1      }
+ 272          
+ 273          /**
+ 274           * @brief  检查并消除已满的行
+ 275           * @param  无
+ 276           * @retval 消除的行数
+ 277           */
+ 278          unsigned char ClearFullLines(){
+ 279   1          unsigned char row, col, r;
+ 280   1          unsigned char linesCleared = 0, isFull = 0;
+ 281   1          
+ 282   1          //从底部向上检查每一行
+ 283   1          for(row = 0; row < GAME_HEIGHT; row++){
+ 284   2              isFull = 1;
+ 285   2             
+ 286   2              //检查当前行是否填满
+ 287   2              for(col = 0; col < GAME_WIDTH; col++){
+ 288   3                  if(gameArea[col][row] == 0){
+ 289   4                      isFull = 0;
+ 290   4                      break;
+ 291   4                  }
+ 292   3              }
+ 293   2              
+ 294   2              //如果行已满，消除该行并将上方所有行下移
+ 295   2              if(isFull){
+ 296   3                  linesCleared++;
+ 297   3                  
+ 298   3                  //将当前行上方所有行下移一行
+ 299   3                  for(r = row; r < GAME_HEIGHT - 1; r++){
+ 300   4                      for(col = 0; col < GAME_WIDTH; col++){
+ 301   5                          gameArea[col][r] = gameArea[col][r + 1];
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 6   
+
+ 302   5                      }
+ 303   4                  }
+ 304   3                  
+ 305   3                  //顶部行清空
+ 306   3                  for(col = 0; col < GAME_WIDTH; col++){
+ 307   4                      gameArea[col][GAME_HEIGHT - 1] = 0;
+ 308   4                  }
+ 309   3                  
+ 310   3                  //重新检查当前行（因为上方行下移后可能又填满了）
+ 311   3                  row--;
+ 312   3              }
+ 313   2          }
+ 314   1          
+ 315   1          if(linesCleared > 0){
+ 316   2              Score_Add(linesCleared);  //消除行后增加积分
+ 317   2          }
+ 318   1          
+ 319   1          return linesCleared;
+ 320   1      }
+ 321          
+ 322          /**
+ 323           * @brief  生成新的活动方块
+ 324           * @param  无
+ 325           * @retval 无
+ 326           */
+ 327          void GenerateNewBlock(){
+ 328   1          //从下一个方块类型更新当前方块
+ 329   1          curBlockType = nextBlockType;
+ 330   1          curRotate = rand() % 4;  //随机旋转状态
+ 331   1          curX = 3;  //初始X位置
+ 332   1          curY = 7;  //初始Y位置（顶部区域）
+ 333   1          nextBlockType = rand() % 4;  //预生成下一个方块
+ 334   1          
+ 335   1          //若新方块初始位置就碰撞，游戏结束
+ 336   1          if(CheckCollision(curX, curY)){
+ 337   2              isGameOver = 1;
+ 338   2          }
+ 339   1      }
+ 340          
+ 341          /**
+ 342           * @brief  处理方块下落逻辑
+ 343           * @param  无
+ 344           * @retval 无
+ 345           */
+ 346          void BlockFall(){
+ 347   1          if(isGameOver || isPaused){  //游戏结束或暂停时不处理
+ 348   2              return;
+ 349   2          }
+ 350   1          
+ 351   1          //计算下落后的Y坐标
+ 352   1          newY = curY - 1;
+ 353   1          
+ 354   1          if(!CheckCollision(curX, newY)){  //无碰撞，允许下落
+ 355   2              curY = newY;
+ 356   2          }else{  //有碰撞，固定当前方块并生成新方块
+ 357   2              FixBlock();
+ 358   2              ClearFullLines();  //检查并消除已满的行
+ 359   2              GenerateNewBlock();
+ 360   2          }
+ 361   1      }
+ 362          /**
+ 363           * @brief  方块左移
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 7   
+
+ 364           * @param  无
+ 365           * @retval 无
+ 366           */
+ 367          void BlockMoveLeft(){
+ 368   1          if(isGameOver || isPaused) return;  //游戏结束或暂停时不响应
+ 369   1          newX = curX - 1;      //计算左移后的X坐标
+ 370   1          if(!CheckCollision(newX, curY)){    //检测无碰撞则移动
+ 371   2              curX = newX;
+ 372   2          }
+ 373   1      }
+ 374          
+ 375          /**
+ 376           * @brief  方块右移
+ 377           * @param  无
+ 378           * @retval 无
+ 379           */
+ 380          void BlockMoveRight(){
+ 381   1          if(isGameOver || isPaused) return;
+ 382   1          newX = curX + 1;      //计算右移后的X坐标
+ 383   1          if(!CheckCollision(newX, curY)){    //检测无碰撞则移动
+ 384   2              curX = newX;
+ 385   2          }
+ 386   1      }
+ 387          
+ 388          /**
+ 389           * @brief  方块下移
+ 390           * @param  无
+ 391           * @retval 无
+ 392           */
+ 393          void BlockMoveDown(){
+ 394   1          if(isGameOver || isPaused) return;
+ 395   1          newY = curY - 1;      //计算下移后的X坐标
+ 396   1          if(!CheckCollision(newX, curY - 1)){    //检测无碰撞则移动
+ 397   2              curY = newY;
+ 398   2          }
+ 399   1      }
+ 400          
+ 401          /**
+ 402           * @brief  方块旋转（顺时针）
+ 403           * @param  无
+ 404           * @retval 无
+ 405           */
+ 406          void BlockRotate(){
+ 407   1          unsigned char oldRotate;
+ 408   1          if(isGameOver || isPaused) return;
+ 409   1          oldRotate = curRotate;          //保存当前旋转状态
+ 410   1          curRotate = (curRotate + 1) % 4;              //计算新旋转状态（0-3循环）
+ 411   1          if(CheckCollision(curX, curY)){               //若旋转后碰撞
+ 412   2              curRotate = oldRotate;                    //恢复原旋转状态
+ 413   2          }
+ 414   1      }
+ 415          
+ 416          /**
+ 417           * @brief  处理键盘输入
+ 418           * @param  key 按键值（1-16，来自MatrixKey()）
+ 419           * @retval 无
+ 420           */
+ 421          void HandleKeyInput(unsigned char key){
+ 422   1          switch(key){
+ 423   2              case 5:  //按键5：左移
+ 424   2                  BlockMoveLeft();
+ 425   2                  break;
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 8   
+
+ 426   2              case 7:  //按键7：右移
+ 427   2                  BlockMoveRight();
+ 428   2                  break;
+ 429   2              case 6:  //按键6：下移
+ 430   2                  BlockMoveDown();
+ 431   2                  break;
+ 432   2              case 2:  //按键2：旋转
+ 433   2                  BlockRotate();
+ 434   2                  break;
+ 435   2              case 14: //按键4：暂停/继续（可选）
+ 436   2                  isPaused = ~isPaused;
+ 437   2                  break;
+ 438   2          }
+ 439   1      }
+ 440          
+ 441          /**
+ 442           * @brief  游戏结束动画
+ 443           * @param  无
+ 444           * @retval 无
+ 445           */
+ 446          void GameOverAnimation(){
+ 447   1          unsigned char frame[8] = {0};
+ 448   1          unsigned char col;
+ 449   1          
+ 450   1          //根据动画状态设置帧
+ 451   1          for(col = 0; col < 8; col++){
+ 452   2              //交替显示列
+ 453   2              if((col % 2) == gameOverAnimState){
+ 454   3                  frame[col] = 0xFF;  //点亮整列
+ 455   3              }else{
+ 456   3                  frame[col] = 0x00;  //熄灭整列
+ 457   3              }
+ 458   2          }
+ 459   1          
+ 460   1          MatrixLED_ShowFrame(frame);
+ 461   1      }
+ 462          
+ 463          /**
+ 464           * @brief  重置游戏（开始新一局）
+ 465           * @param  无
+ 466           * @retval 无
+ 467           */
+ 468          void ResetGame(){
+ 469   1          unsigned char col, row;
+ 470   1          
+ 471   1          //清空游戏区域
+ 472   1          for(col = 0; col < GAME_WIDTH; col++){
+ 473   2              for(row = 0; row < GAME_HEIGHT; row++){
+ 474   3                  gameArea[col][row] = 0;
+ 475   3              }
+ 476   2          }
+ 477   1          
+ 478   1          //重新初始化游戏状态
+ 479   1          isGameOver = 0;
+ 480   1          isPaused = 0;
+ 481   1          Score_Init();
+ 482   1          
+ 483   1          //生成新方块
+ 484   1          curBlockType = rand() % 4;
+ 485   1          curRotate = rand() % 4;
+ 486   1          curX = 3;
+ 487   1          curY = 7;
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 9   
+
+ 488   1          nextBlockType = rand() % 4;
+ 489   1      }
+ 490          
+ 491          void main(){
+ 492   1          //游戏初始化
+ 493   1          GameInit();
+ 494   1          
+ 495   1          //游戏主循环
+ 496   1          while(1){
+ 497   2              //处理定时下落
+ 498   2              if(blockFallFlag == 1){
+ 499   3                  blockFallFlag = 0;
+ 500   3                  BlockFall();
+ 501   3              }
+ 502   2              
+ 503   2              //处理键盘输入
+ 504   2              key = NonBlockKey_GetKey();  //使用非阻塞键盘函数
+ 505   2              if(key != 0){
+ 506   3                  if(isGameOver){
+ 507   4                      //游戏结束时，按16号键重新开始
+ 508   4                      if(key == 16){
+ 509   5                          ResetGame();
+ 510   5                      }
+ 511   4                  }else{
+ 512   4                      HandleKeyInput(key);
+ 513   4                  }
+ 514   3              }
+ 515   2              
+ 516   2              //绘制画面
+ 517   2              if(isGameOver){
+ 518   3                  GameOverAnimation();
+ 519   3              }else{
+ 520   3                  DrawGame();
+ 521   3              }
+ 522   2          }
+ 523   1      }
+ 524          
+ 525          //定时器中断函数
+ 526          void Timer0_Routine() interrupt 1{
+ 527   1          static unsigned int T0Count;
+ 528   1          static unsigned int animCount;
+ 529   1          
+ 530   1          //重新赋初值保证计时为1ms
+ 531   1          TL0 = 0x66;       //设置定时初始值
+ 532   1          TH0 = 0xFC;       //设置定时初始值
+ 533   1          
+ 534   1          //键盘扫描（每1ms扫描一次）
+ 535   1          NonBlockKey_Scan();
+ 536   1          
+ 537   1          if(isGameOver){
+ 538   2              //游戏结束时更新动画计数器
+ 539   2              animCount++;
+ 540   2              if(animCount >= 200){  //约200ms切换一次状态
+ 541   3                  animCount = 0;
+ 542   3                  gameOverAnimState = ~gameOverAnimState;
+ 543   3              }
+ 544   2          }else{
+ 545   2              //正常游戏时处理方块下落
+ 546   2              T0Count++;
+ 547   2              if (T0Count >= Score_GetFallInterval()){
+ 548   3                  T0Count = 0; //初始化计数
+ 549   3                  blockFallFlag = 1; //置位下落标志
+C51 COMPILER V9.60.7.0   MAIN                                                              08/16/2025 18:01:07 PAGE 10  
+
+ 550   3              }
+ 551   2          }
+ 552   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =   1124    ----
+   CONSTANT SIZE    =    160    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     95      23
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      4    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,79 @@
+C51 COMPILER V9.60.7.0   SCORE                                                             08/16/2025 18:01:07 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE SCORE
+OBJECT MODULE PLACED IN .\Objects\score.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE score.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\sc
+                    -ore.lst) TABS(2) OBJECT(.\Objects\score.obj)
+
+line level    source
+
+   1          #include "score.h"
+   2          #include <REGX52.H>
+   3          
+   4          // 模块内部变量（私有）
+   5          static unsigned int score = 0;          // 积分值
+   6          static unsigned int fallInterval = 1000; // 初始下落间隔1000ms
+   7          
+   8          
+   9          /**
+  10           * @brief 初始化积分系统
+  11           */
+  12          void Score_Init() {
+  13   1          score = 0;
+  14   1          fallInterval = 1000;
+  15   1      }
+  16          
+  17          /**
+  18           * @brief 根据消除行数增加积分
+  19           * @param lines 消除的行数（1-3）
+  20           */
+  21          void Score_Add(unsigned char lines) {
+  22   1          // 积分规则：多消行奖励递增
+  23   1          switch(lines) {
+  24   2              case 1: score += 1; break;
+  25   2              case 2: score += 3; break;
+  26   2              case 3: score += 6; break;
+  27   2          }
+  28   1          // 限制最大积分（防止溢出）
+  29   1          if(score > 9999) score = 9999;
+  30   1          // 更新难度（下落速度）
+  31   1          Score_GetFallInterval();
+  32   1      }
+  33          
+  34          ///**
+  35          // * @brief 获取当前积分
+  36          // */
+  37          //unsigned int Score_Get() {
+  38          //    return score;
+  39          //}
+  40          
+  41          
+  42          /**
+  43           * @brief 根据积分计算下落间隔（难度曲线）
+  44           * @return 下落间隔（ms），最低200ms
+  45           */
+  46          unsigned int Score_GetFallInterval() {
+  47   1          // 每增加10分，速度提升100ms（原初始间隔1000ms保持不变）
+  48   1          unsigned int newInterval = 1000 - (score / 10) * 100;
+  49   1          // 限制最低间隔为200ms，保持原样
+  50   1          fallInterval = (newInterval < 200) ? 200 : newInterval;
+  51   1          return fallInterval;
+  52   1      }
+  53              
+
+C51 COMPILER V9.60.7.0   SCORE                                                             08/16/2025 18:01:07 PAGE 2   
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    116    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      4    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

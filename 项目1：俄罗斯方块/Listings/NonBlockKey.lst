@@ -1,0 +1,96 @@
+C51 COMPILER V9.60.7.0   NONBLOCKKEY                                                       08/15/2025 17:02:37 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE NONBLOCKKEY
+OBJECT MODULE PLACED IN .\Objects\NonBlockKey.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE NonBlockKey.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listi
+                    -ngs\NonBlockKey.lst) TABS(2) OBJECT(.\Objects\NonBlockKey.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          
+   3          //列选信号数组，依次选中第1-4列
+   4          static unsigned char idata ColPins[] = {0x08, 0x04, 0x02, 0x01};
+   5          //按键值映射表
+   6          static unsigned char idata KeyMap[4][4] = {
+   7              {1 ,  2,  3,  4},
+   8              {5 ,  6,  7,  8},
+   9              {9 , 10, 11, 12},
+  10              {13, 14, 15, 16}
+  11          };
+  12          
+  13          static unsigned char idata keyState[4][4] = {0};          //按键状态 0-未按下 1-按下
+  14          static unsigned char idata keyDebounce[4][4] = {0};       //消抖计数
+  15          static unsigned char currentKey = 0;                //当前按键值
+  16          static unsigned char scanCol = 0;                   //当前扫描列
+  17          
+  18          
+  19          /**
+  20           * @brief  定时器中断中调用的键盘扫描函数
+  21           * @param  无
+  22           * @retval 无
+  23           */
+  24          void NonBlockKey_Scan(void) {
+  25   1          unsigned char row, rowVal;
+  26   1          
+  27   1          //先将所有列置高，再将当前列置低
+  28   1          P1 = 0xFF;
+  29   1          P1 &= ~ColPins[scanCol];
+  30   1          
+  31   1          //读取行状态
+  32   1          rowVal = (P1 >> 4) & 0x0F; // 取P1_7-P1_4的值
+  33   1          
+  34   1          //检测每一行
+  35   1          for(row = 0; row < 4; row++) {
+  36   2              if(!(rowVal & (1 << (3 - row)))) {
+  37   3                  //按键按下，增加消抖计数
+  38   3                  if(keyDebounce[row][scanCol] < 10) {
+  39   4                      keyDebounce[row][scanCol]++;
+  40   4                      //消抖计数达到阈值，确认按键按下
+  41   4                      if(keyDebounce[row][scanCol] == 10) {
+  42   5                          keyState[row][scanCol] = 1;
+  43   5                          currentKey = KeyMap[row][scanCol];
+  44   5                      }
+  45   4                  }
+  46   3              } else {
+  47   3                  //按键未按下，重置消抖计数和状态
+  48   3                  if(keyDebounce[row][scanCol] > 0) {
+  49   4                      keyDebounce[row][scanCol]--;
+  50   4                      if(keyDebounce[row][scanCol] == 0) {
+  51   5                          keyState[row][scanCol] = 0;
+  52   5                      }
+  53   4                  }
+  54   3              }
+C51 COMPILER V9.60.7.0   NONBLOCKKEY                                                       08/15/2025 17:02:37 PAGE 2   
+
+  55   2          }
+  56   1          
+  57   1          //切换到下一列
+  58   1          scanCol = (scanCol + 1) % 4;
+  59   1      }
+  60          
+  61          /**
+  62           * @brief  获取当前按键值（非阻塞，仅返回一次有效按键）
+  63           * @param  无
+  64           * @retval 按键值（1~16，无按键时返回 0）
+  65           */
+  66          unsigned char NonBlockKey_GetKey(void) {
+  67   1          unsigned char temp = currentKey;
+  68   1          currentKey = 0;  // 读取后清除，确保只获取一次
+  69   1          return temp;
+  70   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    149    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =     52    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,0 +1,820 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    08/16/2025  18:01:08  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_C51\C51\BIN\BL51.EXE .\Objects\main.obj, .\Objects\Timer0.obj, .\Objects\MatrixLED.obj, .\Objects\delay.obj, .\O
+>> bjects\NonBlockKey.obj, .\Objects\score.obj TO .\Objects\project PRINT (.\Listings\project.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  .\Objects\Timer0.obj (TIMER0)
+  .\Objects\MatrixLED.obj (MATRIXLED)
+  .\Objects\delay.obj (DELAY)
+  .\Objects\NonBlockKey.obj (NONBLOCKKEY)
+  .\Objects\score.obj (SCORE)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?COPY)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?CLDOPTR)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?IMUL)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?UIDIV)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?SIDIV)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?OFFXADD)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (RAND)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\project (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000CH     UNIT         _DATA_GROUP_
+            DATA    0014H     0004H     UNIT         ?DT?SCORE
+            DATA    0018H     0004H     UNIT         ?DT?RAND?RAND
+            DATA    001CH     0002H     UNIT         ?DT?NONBLOCKKEY
+                    001EH     0002H                  *** GAP ***
+            BIT     0020H.0   0000H.4   UNIT         ?BI?MAIN
+                    0020H.4   0000H.4                *** GAP ***
+            DATA    0021H     005FH     UNIT         ?DT?MAIN
+            IDATA   0080H     0034H     UNIT         ?ID?NONBLOCKKEY
+            IDATA   00B4H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+            CODE    0003H     0006H     UNIT         ?PR?NONBLOCKKEY_GETKEY?NONBLOCKKEY
+                    0009H     0002H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+            CODE    000EH     01CCH     UNIT         ?C?LIB_CODE
+            CODE    01DAH     00B5H     UNIT         ?PR?DRAWGAME?MAIN
+            CODE    028FH     00ABH     UNIT         ?C_INITSEG
+            CODE    033AH     00A0H     UNIT         ?CO?MAIN
+            CODE    03DAH     008FH     UNIT         ?PR?NONBLOCKKEY_SCAN?NONBLOCKKEY
+            CODE    0469H     008CH     UNIT         ?C_C51STARTUP
+            CODE    04F5H     0081H     UNIT         ?PR?_CHECKCOLLISION?MAIN
+            CODE    0576H     007BH     UNIT         ?PR?TIMER0_ROUTINE?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 2
+
+
+            CODE    05F1H     006EH     UNIT         ?PR?CLEARFULLLINES?MAIN
+            CODE    065FH     0062H     UNIT         ?PR?FIXBLOCK?MAIN
+            CODE    06C1H     005DH     UNIT         ?PR?GAMEINIT?MAIN
+            CODE    071EH     004DH     UNIT         ?PR?RAND?RAND
+            CODE    076BH     0049H     UNIT         ?PR?RESETGAME?MAIN
+            CODE    07B4H     003BH     UNIT         ?PR?GAMEOVERANIMATION?MAIN
+            CODE    07EFH     0039H     UNIT         ?PR?_SCORE_ADD?SCORE
+            CODE    0828H     0031H     UNIT         ?PR?MAIN?MAIN
+            CODE    0859H     002FH     UNIT         ?PR?SCORE_GETFALLINTERVAL?SCORE
+            CODE    0888H     002DH     UNIT         ?PR?GENERATENEWBLOCK?MAIN
+            CODE    08B5H     002DH     UNIT         ?PR?_MATRIXLED_WRITEBYTE?MATRIXLED
+            CODE    08E2H     0028H     UNIT         ?PR?_MATRIXLED_SHOWFRAME?MATRIXLED
+            CODE    090AH     0024H     UNIT         ?PR?_MATRIXLED_SHOWCOLUMN?MATRIXLED
+            CODE    092EH     0023H     UNIT         ?PR?_HANDLEKEYINPUT?MAIN
+            CODE    0951H     0021H     UNIT         ?PR?BLOCKFALL?MAIN
+            CODE    0972H     001BH     UNIT         ?PR?BLOCKROTATE?MAIN
+            CODE    098DH     0017H     UNIT         ?PR?BLOCKMOVELEFT?MAIN
+            CODE    09A4H     0017H     UNIT         ?PR?BLOCKMOVERIGHT?MAIN
+            CODE    09BBH     0017H     UNIT         ?PR?BLOCKMOVEDOWN?MAIN
+            CODE    09D2H     0017H     UNIT         ?PR?TIMER0INIT?TIMER0
+            CODE    09E9H     0016H     UNIT         ?PR?_DELAY1MS?DELAY
+            CODE    09FFH     000CH     UNIT         ?PR?SCORE_INIT?SCORE
+            CODE    0A0BH     0005H     UNIT         ?PR?MATRIXLED_INIT?MATRIXLED
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\project (MAIN)
+
+
+SEGMENT                                       DATA_GROUP 
+  +--> CALLED SEGMENT                       START    LENGTH
+-----------------------------------------------------------
+?PR?TIMER0_ROUTINE?MAIN                     -----    -----
+  +--> ?PR?NONBLOCKKEY_SCAN?NONBLOCKKEY
+  +--> ?PR?SCORE_GETFALLINTERVAL?SCORE
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                               -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                               -----    -----
+  +--> ?PR?GAMEINIT?MAIN
+  +--> ?PR?BLOCKFALL?MAIN
+  +--> ?PR?NONBLOCKKEY_GETKEY?NONBLOCKKEY
+  +--> ?PR?RESETGAME?MAIN
+  +--> ?PR?_HANDLEKEYINPUT?MAIN
+  +--> ?PR?GAMEOVERANIMATION?MAIN
+  +--> ?PR?DRAWGAME?MAIN
+
+?PR?GAMEINIT?MAIN                           -----    -----
+  +--> ?PR?SCORE_INIT?SCORE
+  +--> ?PR?TIMER0INIT?TIMER0
+  +--> ?PR?MATRIXLED_INIT?MATRIXLED
+  +--> ?PR?RAND?RAND
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 3
+
+
+?PR?BLOCKFALL?MAIN                          -----    -----
+  +--> ?PR?_CHECKCOLLISION?MAIN
+  +--> ?PR?FIXBLOCK?MAIN
+  +--> ?PR?CLEARFULLLINES?MAIN
+  +--> ?PR?GENERATENEWBLOCK?MAIN
+
+?PR?_CHECKCOLLISION?MAIN                    0008H    0004H
+  +--> ?CO?MAIN
+
+?PR?FIXBLOCK?MAIN                           0008H    0002H
+  +--> ?CO?MAIN
+
+?PR?CLEARFULLLINES?MAIN                     0008H    0001H
+  +--> ?PR?_SCORE_ADD?SCORE
+
+?PR?_SCORE_ADD?SCORE                        -----    -----
+  +--> ?PR?SCORE_GETFALLINTERVAL?SCORE
+
+?PR?GENERATENEWBLOCK?MAIN                   -----    -----
+  +--> ?PR?RAND?RAND
+  +--> ?PR?_CHECKCOLLISION?MAIN
+
+?PR?RESETGAME?MAIN                          -----    -----
+  +--> ?PR?SCORE_INIT?SCORE
+  +--> ?PR?RAND?RAND
+
+?PR?_HANDLEKEYINPUT?MAIN                    -----    -----
+  +--> ?PR?BLOCKMOVELEFT?MAIN
+  +--> ?PR?BLOCKMOVERIGHT?MAIN
+  +--> ?PR?BLOCKMOVEDOWN?MAIN
+  +--> ?PR?BLOCKROTATE?MAIN
+
+?PR?BLOCKMOVELEFT?MAIN                      -----    -----
+  +--> ?PR?_CHECKCOLLISION?MAIN
+
+?PR?BLOCKMOVERIGHT?MAIN                     -----    -----
+  +--> ?PR?_CHECKCOLLISION?MAIN
+
+?PR?BLOCKMOVEDOWN?MAIN                      -----    -----
+  +--> ?PR?_CHECKCOLLISION?MAIN
+
+?PR?BLOCKROTATE?MAIN                        -----    -----
+  +--> ?PR?_CHECKCOLLISION?MAIN
+
+?PR?GAMEOVERANIMATION?MAIN                  0008H    0008H
+  +--> ?CO?MAIN
+  +--> ?PR?_MATRIXLED_SHOWFRAME?MATRIXLED
+
+?PR?_MATRIXLED_SHOWFRAME?MATRIXLED          0010H    0004H
+  +--> ?PR?_MATRIXLED_SHOWCOLUMN?MATRIXLED
+
+?PR?_MATRIXLED_SHOWCOLUMN?MATRIXLED         -----    -----
+  +--> ?PR?_MATRIXLED_WRITEBYTE?MATRIXLED
+  +--> ?PR?_DELAY1MS?DELAY
+
+?PR?DRAWGAME?MAIN                           0008H    0008H
+  +--> ?CO?MAIN
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 4
+
+
+  +--> ?PR?_MATRIXLED_SHOWFRAME?MATRIXLED
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\project (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:05F1H         PUBLIC        ClearFullLines
+  C:0576H         PUBLIC        Timer0_Routine
+  C:076BH         PUBLIC        ResetGame
+  D:00B0H         PUBLIC        P3
+  C:09A4H         PUBLIC        BlockMoveRight
+  C:01DAH         PUBLIC        DrawGame
+  B:0020H.0       PUBLIC        blockFallFlag
+  C:092EH         PUBLIC        _HandleKeyInput
+  C:06C1H         PUBLIC        GameInit
+  C:04F5H         PUBLIC        _CheckCollision
+  C:098DH         PUBLIC        BlockMoveLeft
+  C:065FH         PUBLIC        FixBlock
+  D:0025H         PUBLIC        gameArea
+  C:09BBH         PUBLIC        BlockMoveDown
+  D:0076H         PUBLIC        newX
+  D:0077H         PUBLIC        curX
+  D:0078H         PUBLIC        newY
+  D:0079H         PUBLIC        curY
+  C:0828H         PUBLIC        main
+  D:007AH         PUBLIC        curRotate
+  C:07B4H         PUBLIC        GameOverAnimation
+  C:03CAH         SYMBOL        _?ix1000
+  B:0020H.1       PUBLIC        isPaused
+  C:03D2H         SYMBOL        _?ix1001
+  B:0020H.2       PUBLIC        gameOverAnimState
+  D:007BH         PUBLIC        key
+  C:0888H         PUBLIC        GenerateNewBlock
+  D:008CH         PUBLIC        TH0
+  D:007CH         PUBLIC        gameOverAnimCount
+  D:008AH         PUBLIC        TL0
+  D:007EH         PUBLIC        nextBlockType
+  D:007FH         PUBLIC        curBlockType
+  C:0972H         PUBLIC        BlockRotate
+  C:033AH         PUBLIC        Block
+  C:0951H         PUBLIC        BlockFall
+  B:0020H.3       PUBLIC        isGameOver
+  -------         PROC          GAMEINIT
+  -------         DO            
+  D:0007H         SYMBOL        col
+  D:0006H         SYMBOL        row
+  -------         ENDDO         
+  C:06C1H         LINE#         152
+  C:06C1H         LINE#         154
+  C:06C3H         LINE#         155
+  C:06C5H         LINE#         156
+  C:06CAH         LINE#         157
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 5
+
+
+  C:06CCH         LINE#         158
+  C:06CFH         LINE#         159
+  C:06D2H         LINE#         160
+  C:06D5H         LINE#         161
+  C:06DCH         LINE#         164
+  C:06DEH         LINE#         165
+  C:06E0H         LINE#         166
+  C:06EBH         LINE#         167
+  C:06EFH         LINE#         168
+  C:06F3H         LINE#         171
+  C:06FFH         LINE#         172
+  C:070BH         LINE#         173
+  C:070EH         LINE#         174
+  C:0711H         LINE#         175
+  C:071DH         LINE#         176
+  -------         ENDPROC       GAMEINIT
+  -------         PROC          DRAWGAME
+  -------         DO            
+  D:0008H         SYMBOL        frame
+  D:0007H         SYMBOL        col
+  D:0006H         SYMBOL        row
+  D:0007H         SYMBOL        r
+  D:0006H         SYMBOL        c
+  D:0005H         SYMBOL        realCol
+  D:0004H         SYMBOL        realRow
+  -------         ENDDO         
+  C:01DAH         LINE#         183
+  C:01DAH         LINE#         184
+  C:01EDH         LINE#         188
+  C:01EFH         LINE#         189
+  C:01F1H         LINE#         190
+  C:01FEH         LINE#         192
+  C:0215H         LINE#         193
+  C:0215H         LINE#         194
+  C:0219H         LINE#         195
+  C:021DH         LINE#         198
+  C:021FH         LINE#         199
+  C:0221H         LINE#         201
+  C:024FH         LINE#         203
+  C:0254H         LINE#         204
+  C:0259H         LINE#         207
+  C:0265H         LINE#         208
+  C:027CH         LINE#         209
+  C:027CH         LINE#         210
+  C:027CH         LINE#         211
+  C:0280H         LINE#         212
+  C:0286H         LINE#         215
+  -------         ENDPROC       DRAWGAME
+  -------         PROC          _CHECKCOLLISION
+  D:0008H         SYMBOL        x
+  D:0009H         SYMBOL        y
+  -------         DO            
+  D:0007H         SYMBOL        r
+  D:0006H         SYMBOL        c
+  -------         DO            
+  D:000AH         SYMBOL        realCol
+  D:000BH         SYMBOL        realRow
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 6
+
+
+  -------         ENDDO         
+  -------         ENDDO         
+  C:04F5H         LINE#         224
+  C:04F9H         LINE#         226
+  C:04FBH         LINE#         227
+  C:04FDH         LINE#         228
+  C:052BH         LINE#         229
+  C:0531H         LINE#         230
+  C:0537H         LINE#         233
+  C:0545H         LINE#         234
+  C:0547H         LINE#         235
+  C:0547H         LINE#         238
+  C:054EH         LINE#         239
+  C:0550H         LINE#         240
+  C:0550H         LINE#         243
+  C:0566H         LINE#         244
+  C:0568H         LINE#         245
+  C:0568H         LINE#         246
+  C:0568H         LINE#         247
+  C:056EH         LINE#         248
+  C:0574H         LINE#         249
+  C:0575H         LINE#         250
+  -------         ENDPROC       _CHECKCOLLISION
+  -------         PROC          FIXBLOCK
+  -------         DO            
+  D:0007H         SYMBOL        r
+  D:0006H         SYMBOL        c
+  -------         DO            
+  D:0008H         SYMBOL        realCol
+  D:0009H         SYMBOL        realRow
+  -------         ENDDO         
+  -------         ENDDO         
+  C:065FH         LINE#         257
+  C:065FH         LINE#         259
+  C:0661H         LINE#         260
+  C:0663H         LINE#         261
+  C:0691H         LINE#         262
+  C:0697H         LINE#         263
+  C:069DH         LINE#         265
+  C:06ABH         LINE#         266
+  C:06B8H         LINE#         267
+  C:06B8H         LINE#         268
+  C:06B8H         LINE#         269
+  C:06BCH         LINE#         270
+  C:06C0H         LINE#         271
+  -------         ENDPROC       FIXBLOCK
+  -------         PROC          CLEARFULLLINES
+  -------         DO            
+  D:0006H         SYMBOL        row
+  D:0005H         SYMBOL        col
+  D:0004H         SYMBOL        r
+  D:0008H         SYMBOL        linesCleared
+  D:0007H         SYMBOL        isFull
+  -------         ENDDO         
+  C:05F1H         LINE#         278
+  C:05F1H         LINE#         280
+  C:05F4H         LINE#         283
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 7
+
+
+  C:05F5H         LINE#         284
+  C:05F7H         LINE#         287
+  C:05F9H         LINE#         288
+  C:0605H         LINE#         289
+  C:0606H         LINE#         290
+  C:0608H         LINE#         291
+  C:0608H         LINE#         292
+  C:060CH         LINE#         295
+  C:060FH         LINE#         296
+  C:0611H         LINE#         299
+  C:0619H         LINE#         300
+  C:061BH         LINE#         301
+  C:0631H         LINE#         302
+  C:0635H         LINE#         303
+  C:0638H         LINE#         306
+  C:063AH         LINE#         307
+  C:0644H         LINE#         308
+  C:0648H         LINE#         311
+  C:0649H         LINE#         312
+  C:0649H         LINE#         313
+  C:0650H         LINE#         315
+  C:0657H         LINE#         316
+  C:065CH         LINE#         317
+  C:065CH         LINE#         319
+  C:065EH         LINE#         320
+  -------         ENDPROC       CLEARFULLLINES
+  -------         PROC          GENERATENEWBLOCK
+  C:0888H         LINE#         327
+  C:0888H         LINE#         329
+  C:088BH         LINE#         330
+  C:0897H         LINE#         331
+  C:089AH         LINE#         332
+  C:089DH         LINE#         333
+  C:08A9H         LINE#         336
+  C:08B2H         LINE#         337
+  C:08B4H         LINE#         338
+  C:08B4H         LINE#         339
+  -------         ENDPROC       GENERATENEWBLOCK
+  -------         PROC          BLOCKFALL
+  C:0951H         LINE#         346
+  C:0951H         LINE#         347
+  C:0957H         LINE#         349
+  C:0957H         LINE#         352
+  C:095CH         LINE#         354
+  C:0964H         LINE#         355
+  C:0967H         LINE#         356
+  C:0968H         LINE#         357
+  C:096BH         LINE#         358
+  C:096EH         LINE#         359
+  C:0971H         LINE#         360
+  C:0971H         LINE#         361
+  -------         ENDPROC       BLOCKFALL
+  -------         PROC          BLOCKMOVELEFT
+  C:098DH         LINE#         367
+  C:098DH         LINE#         368
+  C:0993H         LINE#         369
+  C:0998H         LINE#         370
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 8
+
+
+  C:09A0H         LINE#         371
+  C:09A3H         LINE#         372
+  C:09A3H         LINE#         373
+  -------         ENDPROC       BLOCKMOVELEFT
+  -------         PROC          BLOCKMOVERIGHT
+  C:09A4H         LINE#         380
+  C:09A4H         LINE#         381
+  C:09AAH         LINE#         382
+  C:09AFH         LINE#         383
+  C:09B7H         LINE#         384
+  C:09BAH         LINE#         385
+  C:09BAH         LINE#         386
+  -------         ENDPROC       BLOCKMOVERIGHT
+  -------         PROC          BLOCKMOVEDOWN
+  C:09BBH         LINE#         393
+  C:09BBH         LINE#         394
+  C:09C1H         LINE#         395
+  C:09C7H         LINE#         396
+  C:09CEH         LINE#         397
+  C:09D1H         LINE#         398
+  C:09D1H         LINE#         399
+  -------         ENDPROC       BLOCKMOVEDOWN
+  -------         PROC          BLOCKROTATE
+  -------         DO            
+  D:0004H         SYMBOL        oldRotate
+  -------         ENDDO         
+  C:0972H         LINE#         406
+  C:0972H         LINE#         408
+  C:0978H         LINE#         409
+  C:097AH         LINE#         410
+  C:0981H         LINE#         411
+  C:098AH         LINE#         412
+  C:098CH         LINE#         413
+  C:098CH         LINE#         414
+  -------         ENDPROC       BLOCKROTATE
+  -------         PROC          _HANDLEKEYINPUT
+  D:0007H         SYMBOL        key
+  C:092EH         LINE#         421
+  C:092EH         LINE#         422
+  C:0942H         LINE#         423
+  C:0942H         LINE#         424
+  C:0945H         LINE#         425
+  C:0945H         LINE#         426
+  C:0945H         LINE#         427
+  C:0948H         LINE#         428
+  C:0948H         LINE#         429
+  C:0948H         LINE#         430
+  C:094BH         LINE#         431
+  C:094BH         LINE#         432
+  C:094BH         LINE#         433
+  C:094EH         LINE#         434
+  C:094EH         LINE#         435
+  C:094EH         LINE#         436
+  C:0950H         LINE#         437
+  C:0950H         LINE#         438
+  C:0950H         LINE#         439
+  -------         ENDPROC       _HANDLEKEYINPUT
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 9
+
+
+  -------         PROC          GAMEOVERANIMATION
+  -------         DO            
+  D:0008H         SYMBOL        frame
+  D:0007H         SYMBOL        col
+  -------         ENDDO         
+  C:07B4H         LINE#         446
+  C:07B4H         LINE#         447
+  C:07C7H         LINE#         451
+  C:07C9H         LINE#         453
+  C:07D4H         LINE#         454
+  C:07DAH         LINE#         455
+  C:07DCH         LINE#         456
+  C:07E2H         LINE#         457
+  C:07E2H         LINE#         458
+  C:07E6H         LINE#         460
+  -------         ENDPROC       GAMEOVERANIMATION
+  -------         PROC          RESETGAME
+  -------         DO            
+  D:0007H         SYMBOL        col
+  D:0006H         SYMBOL        row
+  -------         ENDDO         
+  C:076BH         LINE#         468
+  C:076BH         LINE#         472
+  C:076DH         LINE#         473
+  C:076FH         LINE#         474
+  C:077AH         LINE#         475
+  C:077EH         LINE#         476
+  C:0782H         LINE#         479
+  C:0784H         LINE#         480
+  C:0786H         LINE#         481
+  C:0789H         LINE#         484
+  C:0795H         LINE#         485
+  C:07A1H         LINE#         486
+  C:07A4H         LINE#         487
+  C:07A7H         LINE#         488
+  C:07B3H         LINE#         489
+  -------         ENDPROC       RESETGAME
+  -------         PROC          MAIN
+  C:0828H         LINE#         491
+  C:0828H         LINE#         493
+  C:082BH         LINE#         496
+  C:082BH         LINE#         498
+  C:082EH         LINE#         499
+  C:0830H         LINE#         500
+  C:0833H         LINE#         501
+  C:0833H         LINE#         504
+  C:0838H         LINE#         505
+  C:083CH         LINE#         506
+  C:083FH         LINE#         508
+  C:0842H         LINE#         509
+  C:0845H         LINE#         510
+  C:0845H         LINE#         511
+  C:0847H         LINE#         512
+  C:084CH         LINE#         513
+  C:084CH         LINE#         514
+  C:084CH         LINE#         517
+  C:084FH         LINE#         518
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 10
+
+
+  C:0852H         LINE#         519
+  C:0854H         LINE#         520
+  C:0857H         LINE#         521
+  C:0857H         LINE#         522
+  -------         ENDPROC       MAIN
+  -------         PROC          TIMER0_ROUTINE
+  -------         DO            
+  D:0021H         SYMBOL        T0Count
+  D:0023H         SYMBOL        animCount
+  -------         ENDDO         
+  C:0576H         LINE#         526
+  C:0593H         LINE#         531
+  C:0596H         LINE#         532
+  C:0599H         LINE#         535
+  C:059CH         LINE#         537
+  C:059FH         LINE#         539
+  C:05A7H         LINE#         540
+  C:05B0H         LINE#         541
+  C:05B6H         LINE#         542
+  C:05B8H         LINE#         543
+  C:05B8H         LINE#         544
+  C:05BAH         LINE#         546
+  C:05C2H         LINE#         547
+  C:05CEH         LINE#         548
+  C:05D4H         LINE#         549
+  C:05D6H         LINE#         550
+  C:05D6H         LINE#         551
+  C:05D6H         LINE#         552
+  -------         ENDPROC       TIMER0_ROUTINE
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        TIMER0
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  B:00A8H.7       PUBLIC        EA
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.1       PUBLIC        ET0
+  B:0088H.5       PUBLIC        TF0
+  C:09D2H         PUBLIC        Timer0Init
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:00B8H.1       PUBLIC        PT0
+  B:0088H.4       PUBLIC        TR0
+  -------         PROC          TIMER0INIT
+  C:09D2H         LINE#         10
+  C:09D2H         LINE#         11
+  C:09D2H         LINE#         13
+  C:09D5H         LINE#         14
+  C:09D8H         LINE#         15
+  C:09DBH         LINE#         16
+  C:09DEH         LINE#         17
+  C:09E0H         LINE#         18
+  C:09E2H         LINE#         19
+  C:09E4H         LINE#         20
+  C:09E6H         LINE#         21
+  C:09E8H         LINE#         22
+  -------         ENDPROC       TIMER0INIT
+  -------         ENDMOD        TIMER0
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 11
+
+
+
+  -------         MODULE        MATRIXLED
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0080H         PUBLIC        P0
+  D:00B0H         PUBLIC        P3
+  C:08E2H         PUBLIC        _MatrixLED_ShowFrame
+  C:090AH         PUBLIC        _MatrixLED_ShowColumn
+  C:0A0BH         PUBLIC        MatrixLED_Init
+  C:08B5H         PUBLIC        _MatrixLED_WriteByte
+  B:00B0H.5       PUBLIC        RCK
+  B:00B0H.6       PUBLIC        SCK
+  B:00B0H.4       PUBLIC        SER
+  -------         PROC          MATRIXLED_INIT
+  C:0A0BH         LINE#         9
+  C:0A0BH         LINE#         10
+  C:0A0BH         LINE#         11
+  C:0A0DH         LINE#         12
+  C:0A0FH         LINE#         13
+  -------         ENDPROC       MATRIXLED_INIT
+  -------         PROC          _MATRIXLED_WRITEBYTE
+  D:0005H         SYMBOL        Byte
+  -------         DO            
+  D:0003H         SYMBOL        i
+  -------         ENDDO         
+  C:08B5H         LINE#         20
+  C:08B7H         LINE#         21
+  C:08B7H         LINE#         23
+  C:08B9H         LINE#         24
+  C:08B9H         LINE#         25
+  C:08D5H         LINE#         26
+  C:08D7H         LINE#         27
+  C:08D9H         LINE#         28
+  C:08DDH         LINE#         29
+  C:08DFH         LINE#         30
+  C:08E1H         LINE#         31
+  -------         ENDPROC       _MATRIXLED_WRITEBYTE
+  -------         PROC          _MATRIXLED_SHOWCOLUMN
+  D:0004H         SYMBOL        Column
+  D:0006H         SYMBOL        Data
+  C:090AH         LINE#         39
+  C:090EH         LINE#         40
+  C:090EH         LINE#         41
+  C:0913H         LINE#         42
+  C:0923H         LINE#         43
+  C:092AH         LINE#         44
+  C:092DH         LINE#         45
+  -------         ENDPROC       _MATRIXLED_SHOWCOLUMN
+  -------         PROC          _MATRIXLED_SHOWFRAME
+  D:0010H         SYMBOL        Frame
+  -------         DO            
+  D:0013H         SYMBOL        i
+  -------         ENDDO         
+  C:08E2H         LINE#         52
+  C:08E8H         LINE#         53
+  C:08E8H         LINE#         55
+  C:08EBH         LINE#         56
+  C:08EBH         LINE#         57
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 12
+
+
+  C:0900H         LINE#         58
+  C:0909H         LINE#         59
+  -------         ENDPROC       _MATRIXLED_SHOWFRAME
+  -------         ENDMOD        MATRIXLED
+
+  -------         MODULE        DELAY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:09E9H         PUBLIC        _Delay1ms
+  -------         PROC          _DELAY1MS
+  D:0006H         SYMBOL        xms
+  -------         DO            
+  D:0005H         SYMBOL        i
+  D:0004H         SYMBOL        j
+  -------         ENDDO         
+  C:09E9H         LINE#         9
+  C:09E9H         LINE#         10
+  C:09E9H         LINE#         12
+  C:09F3H         LINE#         13
+  C:09F3H         LINE#         14
+  C:09F4H         LINE#         15
+  C:09F6H         LINE#         16
+  C:09F8H         LINE#         18
+  C:09F8H         LINE#         19
+  C:09FAH         LINE#         20
+  C:09FCH         LINE#         21
+  C:09FEH         LINE#         22
+  -------         ENDPROC       _DELAY1MS
+  -------         ENDMOD        DELAY
+
+  -------         MODULE        NONBLOCKKEY
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0090H         PUBLIC        P1
+  C:03DAH         PUBLIC        NonBlockKey_Scan
+  D:001CH         SYMBOL        currentKey
+  I:0080H         SYMBOL        ColPins
+  D:001DH         SYMBOL        scanCol
+  I:0084H         SYMBOL        KeyMap
+  I:0094H         SYMBOL        keyState
+  C:0003H         PUBLIC        NonBlockKey_GetKey
+  I:00A4H         SYMBOL        keyDebounce
+  -------         PROC          NONBLOCKKEY_SCAN
+  -------         DO            
+  D:0004H         SYMBOL        row
+  D:0005H         SYMBOL        rowVal
+  -------         ENDDO         
+  C:03DAH         LINE#         24
+  C:03DAH         LINE#         28
+  C:03DDH         LINE#         29
+  C:03E6H         LINE#         32
+  C:03ECH         LINE#         35
+  C:03EEH         LINE#         36
+  C:040AH         LINE#         38
+  C:041AH         LINE#         39
+  C:041BH         LINE#         41
+  C:0420H         LINE#         42
+  C:042CH         LINE#         43
+  C:0439H         LINE#         44
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 13
+
+
+  C:0439H         LINE#         45
+  C:0439H         LINE#         46
+  C:043BH         LINE#         48
+  C:044BH         LINE#         49
+  C:044CH         LINE#         50
+  C:044FH         LINE#         51
+  C:045BH         LINE#         52
+  C:045BH         LINE#         53
+  C:045BH         LINE#         54
+  C:045BH         LINE#         55
+  C:0461H         LINE#         58
+  C:0468H         LINE#         59
+  -------         ENDPROC       NONBLOCKKEY_SCAN
+  -------         PROC          NONBLOCKKEY_GETKEY
+  -------         DO            
+  D:0007H         SYMBOL        temp
+  -------         ENDDO         
+  C:0003H         LINE#         66
+  C:0003H         LINE#         67
+  C:0005H         LINE#         68
+  C:0008H         LINE#         69
+  C:0008H         LINE#         70
+  -------         ENDPROC       NONBLOCKKEY_GETKEY
+  -------         ENDMOD        NONBLOCKKEY
+
+  -------         MODULE        SCORE
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:0014H         PUBLIC        score
+  C:0859H         PUBLIC        Score_GetFallInterval
+  C:07EFH         PUBLIC        _Score_Add
+  D:0016H         SYMBOL        fallInterval
+  C:09FFH         PUBLIC        Score_Init
+  -------         PROC          SCORE_INIT
+  C:09FFH         LINE#         12
+  C:09FFH         LINE#         13
+  C:0A04H         LINE#         14
+  C:0A0AH         LINE#         15
+  -------         ENDPROC       SCORE_INIT
+  -------         PROC          _SCORE_ADD
+  D:0007H         SYMBOL        lines
+  C:07EFH         LINE#         21
+  C:07EFH         LINE#         23
+  C:07FBH         LINE#         24
+  C:0805H         LINE#         25
+  C:0809H         LINE#         26
+  C:0814H         LINE#         27
+  C:0814H         LINE#         29
+  C:0825H         LINE#         31
+  -------         ENDPROC       _SCORE_ADD
+  -------         PROC          SCORE_GETFALLINTERVAL
+  -------         DO            
+  D:0006H         SYMBOL        newInterval
+  -------         ENDDO         
+  C:0859H         LINE#         46
+  C:0859H         LINE#         48
+  C:0874H         LINE#         50
+  C:0887H         LINE#         51
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/16/2025  18:01:08  PAGE 14
+
+
+  C:0887H         LINE#         52
+  -------         ENDPROC       SCORE_GETFALLINTERVAL
+  -------         ENDMOD        SCORE
+
+  -------         MODULE        ?C?COPY
+  C:00DEH         PUBLIC        ?C?COPY
+  -------         ENDMOD        ?C?COPY
+
+  -------         MODULE        ?C?CLDOPTR
+  C:0104H         PUBLIC        ?C?CLDOPTR
+  -------         ENDMOD        ?C?CLDOPTR
+
+  -------         MODULE        ?C?IMUL
+  C:0131H         PUBLIC        ?C?IMUL
+  -------         ENDMOD        ?C?IMUL
+
+  -------         MODULE        ?C?UIDIV
+  C:0143H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+  -------         MODULE        ?C?SIDIV
+  C:0198H         PUBLIC        ?C?SIDIV
+  -------         ENDMOD        ?C?SIDIV
+
+  -------         MODULE        ?C?OFFXADD
+  C:01CEH         PUBLIC        ?C?OFFXADD
+  -------         ENDMOD        ?C?OFFXADD
+
+  -------         MODULE        RAND
+  D:0018H         PUBLIC        ?SRAND?BYTE
+  C:071EH         PUBLIC        RAND
+  C:0760H         PUBLIC        _SRAND
+  -------         ENDMOD        RAND
+
+Program Size: data=178.4 xdata=0 code=2574
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)
