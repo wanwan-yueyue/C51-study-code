@@ -1,0 +1,206 @@
+C51 COMPILER V9.60.7.0   BUZZER                                                            08/08/2025 17:02:17 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE BUZZER
+OBJECT MODULE PLACED IN .\Objects\Buzzer.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE Buzzer.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\B
+                    -uzzer.lst) TABS(2) OBJECT(.\Objects\Buzzer.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include <INTRINS.H>
+   3          #include "Buzzer.h"
+   4          #include "Delay.h"
+   5          
+   6          // 私有变量
+   7          static unsigned int currentBPM = 120;               // 当前BPM
+   8          static unsigned char currentKeySignature = C_MAJOR; // 当前调号
+   9          static const float code SEMITONE_RATIO = 1.059463094f;     // 半音频率比 (2^(1/12))
+  10          
+  11          // 调号映射表：每个调号对应的半音偏移（-1=降半音，0=不变，1=升半音）
+  12          // 顺序：C, C#, D, D#, E, F, F#, G, G#, A, A#, B
+  13          static const signed char code keySignatureMap[15][12] = {
+  14              {0,0,0,0,0,0,0,0,0,0,0,0},   // C_MAJOR
+  15              {0,0,0,0,0,1,0,0,0,0,0,0},   // G_MAJOR (F#)
+  16              {1,0,0,0,0,1,0,0,0,0,0,0},   // D_MAJOR (F#, C#)
+  17              {1,0,0,0,0,1,0,1,0,0,0,0},   // A_MAJOR (F#, C#, G#)
+  18              {1,0,0,0,0,1,0,1,0,1,0,0},   // E_MAJOR (F#, C#, G#, D#)
+  19              {1,0,0,0,0,1,0,1,0,1,0,1},   // B_MAJOR (F#, C#, G#, D#, A#)
+  20              {1,0,1,0,0,1,0,1,0,1,0,1},   // F_SHARP_MAJOR (F#, C#, G#, D#, A#, E#)
+  21              {1,0,1,0,1,1,0,1,0,1,0,1},   // C_SHARP_MAJOR (所有音升半音)
+  22              {0,0,0,0,0,0,1,0,0,0,0,0},   // F_MAJOR (Bb)
+  23              {0,0,0,0,0,0,1,0,0,1,0,0},   // B_FLAT_MAJOR (Bb, Eb)
+  24              {0,0,0,0,0,0,1,0,0,1,0,1},   // E_FLAT_MAJOR (Bb, Eb, Ab)
+  25              {0,0,0,0,0,0,1,0,1,1,0,1},   // A_FLAT_MAJOR (Bb, Eb, Ab, Db)
+  26              {0,0,0,0,0,0,1,0,1,1,0,1},   // D_FLAT_MAJOR (Bb, Eb, Ab, Db, Gb)
+  27              {0,0,1,0,0,0,1,0,1,1,0,1},   // G_FLAT_MAJOR (Bb, Eb, Ab, Db, Gb, Cb)
+  28              {0,0,1,0,1,0,1,0,1,1,0,1}    // C_FLAT_MAJOR (所有音降半音)
+  29          };
+  30          
+  31          // 全局变量定义
+  32          unsigned int Buzzer_Freq = 0;
+  33          bit Buzzer_Playing = 0;
+  34          
+  35          /*
+  36          // 蜂鸣器私有延时函数 (100us)
+  37          void Buzzer_Delay100us(unsigned int us) //@11.0592MHz
+  38          {
+  39            unsigned char i;
+  40            while(us--)
+  41            {
+  42              _nop_();
+  43              i = 43;
+  44              while (--i);
+  45            }
+  46          }
+  47          */
+  48          
+  49          // 初始化蜂鸣器，设置BPM和调号
+  50          void Buzzer_Init(unsigned int bpm, unsigned char keySignature)
+  51          {
+  52   1          if (bpm > 0) currentBPM = bpm;
+  53   1          if (keySignature <= C_FLAT_MAJOR) currentKeySignature = keySignature;
+  54   1          Buzzer = 0;
+C51 COMPILER V9.60.7.0   BUZZER                                                            08/08/2025 17:02:17 PAGE 2   
+
+  55   1      }
+  56          
+  57          // 修改调号
+  58          void Buzzer_SetKeySignature(unsigned char keySignature)
+  59          {
+  60   1          if (keySignature <= C_FLAT_MAJOR)
+  61   1          {
+  62   2              currentKeySignature = keySignature;
+  63   2          }
+  64   1      }
+  65          
+  66          // 修改BPM
+  67          void Buzzer_SetBPM(unsigned int bpm)
+  68          {
+  69   1          if (bpm > 0)
+  70   1          {
+  71   2              currentBPM = bpm;
+  72   2          }
+  73   1      }
+  74          
+  75          // 计算音符时长（毫秒）
+  76          static unsigned int CalculateNoteDuration(unsigned int noteType)
+  77          {
+  78   1          unsigned int beatDuration = 60000 / currentBPM;  // 一拍的时长(毫秒)
+  79   1          unsigned int duration = (4 * beatDuration) / (noteType & ~DOT);  // 基础时长
+  80   1          
+  81   1          if (noteType & DOT)  // 附点音符增加一半时长
+  82   1          {
+  83   2              duration += duration / 2;
+  84   2          }
+  85   1          
+  86   1          return duration;
+  87   1      }
+  88          
+  89          // 根据调号计算实际频率
+  90          static float GetActualFrequency(float baseFrequency, NoteName noteName)
+  91          {
+  92   1          char i = 0;
+  93   1          signed char offset = keySignatureMap[currentKeySignature][noteName];
+  94   1          float actualFreq = baseFrequency;
+  95   1          
+  96   1          // 根据偏移计算实际频率（半音比例）
+  97   1          if (offset > 0)
+  98   1          {
+  99   2              for (i = 0; i < offset; i++)
+ 100   2              {
+ 101   3                  actualFreq *= SEMITONE_RATIO;
+ 102   3              }
+ 103   2          }
+ 104   1          else if (offset < 0)
+ 105   1          {
+ 106   2              for (i = 0; i > offset; i--)
+ 107   2              {
+ 108   3                  actualFreq /= SEMITONE_RATIO;
+ 109   3              }
+ 110   2          }
+ 111   1          
+ 112   1          return actualFreq;
+ 113   1      }
+ 114          
+ 115          // 计算定时器初值
+ 116          static unsigned int CalculateTimerReload(float frequency)
+C51 COMPILER V9.60.7.0   BUZZER                                                            08/08/2025 17:02:17 PAGE 3   
+
+ 117          {
+ 118   1          if (frequency <= 0) return 0;  // 休止符
+ 119   1          // 11.0592MHz晶振，12分频，计算16位定时器初值
+ 120   1          return 65536 - (unsigned int)(11059200UL / (24UL * frequency));
+ 121   1      }
+ 122          
+ 123          // 播放指定音符
+ 124          // baseFrequency: 基础频率
+ 125          // noteName: 音名（用于调号处理）
+ 126          // noteType: 音符类型（使用头文件中定义的宏）
+ 127          void Buzzer_PlayNote(float baseFrequency, NoteName noteName, unsigned int noteType)
+ 128          {
+ 129   1          float actualFrequency;
+ 130   1          unsigned int duration;
+ 131   1          unsigned int reload;
+ 132   1          
+ 133   1          // 参数校验（允许baseFrequency为0作为休止符，其他参数需有效）
+ 134   1          if (noteType == 0 || noteName < NOTE_C || noteName > NOTE_B)
+ 135   1          {
+ 136   2              Buzzer_Freq = 0;
+ 137   2              Buzzer_Playing = 0;
+ 138   2              return;
+ 139   2          }
+ 140   1          
+ 141   1          // 计算实际频率和时长
+ 142   1          
+ 143   1          // 处理休止符（基础频率为0）
+ 144   1          if (baseFrequency <= 0)
+ 145   1          {
+ 146   2              // 停止蜂鸣器，保持静音
+ 147   2              Buzzer_Playing = 0;
+ 148   2              TR0 = 0;          // 停止定时器
+ 149   2              Buzzer = 0;       // 确保蜂鸣器关闭
+ 150   2              duration = CalculateNoteDuration(noteType);
+ 151   2              Delay1ms(duration); // 等待休止符时长
+ 152   2              Delay1ms(5);      // 音符间停顿
+ 153   2              return;
+ 154   2          }
+ 155   1          
+ 156   1           // 处理正常音符（非休止符）
+ 157   1          actualFrequency = GetActualFrequency(baseFrequency, noteName);
+ 158   1          duration = CalculateNoteDuration(noteType);
+ 159   1          reload = CalculateTimerReload(actualFrequency);
+ 160   1          
+ 161   1          // 设置定时器并启动
+ 162   1          Buzzer_Freq = reload;
+ 163   1          Buzzer_Playing = 1;
+ 164   1          TR0 = 1;  // 启动定时器0
+ 165   1          
+ 166   1          // 等待音符播放完成
+ 167   1          Delay1ms(duration);
+ 168   1          
+ 169   1          // 停止播放
+ 170   1          Buzzer_Playing = 0;
+ 171   1          TR0 = 0;  // 停止定时器0
+ 172   1          Buzzer = 0;  // 关闭蜂鸣器
+ 173   1          
+ 174   1          // 音符间停顿
+ 175   1          Delay1ms(5);
+ 176   1      }
+
+
+C51 COMPILER V9.60.7.0   BUZZER                                                            08/08/2025 17:02:17 PAGE 4   
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    512    ----
+   CONSTANT SIZE    =    184    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      5      30
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =      1    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

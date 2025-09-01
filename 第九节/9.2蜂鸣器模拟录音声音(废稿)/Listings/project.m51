@@ -1,0 +1,498 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    08/09/2025  13:42:23  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+C:\KEIL_C51\C51\BIN\BL51.EXE .\Objects\main.obj, .\Objects\AudioProcess.obj, .\Objects\Buzzer.obj, .\Objects\Timer0.obj,
+>>  .\Objects\Uart.obj TO .\Objects\project PRINT (.\Listings\project.m51) RAMSIZE (256)
+
+
+MEMORY MODEL: SMALL WITH FLOATING POINT ARITHMETIC
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\main.obj (MAIN)
+  .\Objects\AudioProcess.obj (AUDIOPROCESS)
+  .\Objects\Buzzer.obj (BUZZER)
+  .\Objects\Timer0.obj (TIMER0)
+  .\Objects\Uart.obj (UART)
+  C:\KEIL_C51\C51\LIB\C51FPS.LIB (?C?FPMUL)
+  C:\KEIL_C51\C51\LIB\C51FPS.LIB (?C?FPDIV)
+  C:\KEIL_C51\C51\LIB\C51FPS.LIB (?C?FPCMP)
+  C:\KEIL_C51\C51\LIB\C51FPS.LIB (?C?FCAST)
+  C:\KEIL_C51\C51\LIB\C51FPS.LIB (?C?CASTF)
+  C:\KEIL_C51\C51\LIB\C51FPS.LIB (?C?FPGETOPN)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?IMUL)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?UIDIV)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?ULDIV)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?SLDIV)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?LNEG)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?LLDCODE0)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C?LIMUL)
+  C:\KEIL_C51\C51\LIB\C51S.LIB (?C_INIT)
+
+
+LINK MAP OF MODULE:  .\Objects\project (MAIN)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+            DATA    0008H     000DH     UNIT         ?DT?_BUZZER_PLAYNOTE?BUZZER
+            DATA    0015H     000BH     UNIT         ?DT?_GETACTUALFREQUENCY?BUZZER
+            BIT     0020H.0   0000H.1   UNIT         ?BI?BUZZER
+                    0020H.1   0000H.7                *** GAP ***
+            DATA    0021H     0008H     UNIT         _DATA_GROUP_
+            DATA    0029H     0005H     UNIT         ?DT?BUZZER
+            DATA    002EH     0002H     UNIT         ?DT?_CALCULATENOTEDURATION?BUZZER
+            DATA    0030H     0001H     UNIT         ?DT?UART
+            IDATA   0031H     0001H     UNIT         ?STACK
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     0003H     ABSOLUTE     
+                    0003H     0008H                  *** GAP ***
+            CODE    000BH     0003H     ABSOLUTE     
+                    000EH     0015H                  *** GAP ***
+            CODE    0023H     0003H     ABSOLUTE     
+                    0026H     07DAH                  *** GAP ***
+            CODE    0800H     045EH     UNIT         ?C?LIB_CODE
+            CODE    0C5EH     00B8H     UNIT         ?CO?BUZZER
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 2
+
+
+            CODE    0D16H     00A4H     UNIT         ?PR?_GETACTUALFREQUENCY?BUZZER
+            CODE    0DBAH     009AH     UNIT         ?PR?_BUZZER_PLAYNOTE?BUZZER
+            CODE    0E54H     008CH     UNIT         ?C_C51STARTUP
+            CODE    0EE0H     005BH     UNIT         ?PR?UART_ROUTINE?UART
+            CODE    0F3BH     0046H     UNIT         ?PR?_CALCULATENOTEDURATION?BUZZER
+            CODE    0F81H     0044H     UNIT         ?C?LDIV
+            CODE    0FC5H     0036H     UNIT         ?PR?_CALCULATETIMERRELOAD?BUZZER
+            CODE    0FFBH     001BH     UNIT         ?PR?TIMER0_ROUTINE?TIMER0
+            CODE    1016H     001BH     UNIT         ?PR?UART_INIT?UART
+            CODE    1031H     0019H     UNIT         ?PR?_PCM_TO_FREQ?AUDIOPROCESS
+            CODE    104AH     0018H     UNIT         ?PR?_BUZZER_INIT?BUZZER
+            CODE    1062H     0011H     UNIT         ?C_INITSEG
+            CODE    1073H     0010H     UNIT         ?PR?MAIN?MAIN
+            CODE    1083H     000FH     UNIT         ?PR?TIMER0INIT?TIMER0
+            CODE    1092H     000EH     UNIT         ?PR?_BUZZER_SETBPM?BUZZER
+            CODE    10A0H     0009H     UNIT         ?PR?_BUZZER_SETKEYSIGNATURE?BUZZER
+            CODE    10A9H     0008H     UNIT         ?PR?_UART_SENDBYTE?UART
+
+
+
+OVERLAY MAP OF MODULE:   .\Objects\project (MAIN)
+
+
+SEGMENT                                      DATA_GROUP 
+  +--> CALLED SEGMENT                      START    LENGTH
+----------------------------------------------------------
+?PR?UART_ROUTINE?UART                      -----    -----
+  +--> ?PR?_PCM_TO_FREQ?AUDIOPROCESS
+  +--> ?PR?_CALCULATETIMERRELOAD?BUZZER
+
+?PR?_CALCULATETIMERRELOAD?BUZZER           0021H    0008H
+
+*** NEW ROOT ***************************************************
+
+?C_C51STARTUP                              -----    -----
+  +--> ?PR?MAIN?MAIN
+  +--> ?C_INITSEG
+
+?PR?MAIN?MAIN                              -----    -----
+  +--> ?PR?TIMER0INIT?TIMER0
+  +--> ?PR?UART_INIT?UART
+  +--> ?PR?_BUZZER_INIT?BUZZER
+
+
+
+UNRESOLVED EXTERNAL SYMBOLS:
+   _DELAY1MS
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\project (MAIN)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        MAIN
+  C:0000H         SYMBOL        _ICE_DUMMY_
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 3
+
+
+  D:00A0H         PUBLIC        P2
+  C:1073H         PUBLIC        main
+  -------         PROC          MAIN
+  C:1073H         LINE#         6
+  C:1073H         LINE#         7
+  C:1076H         LINE#         8
+  C:1079H         LINE#         9
+  C:1081H         LINE#         11
+  C:1081H         LINE#         13
+  -------         ENDPROC       MAIN
+  -------         ENDMOD        MAIN
+
+  -------         MODULE        AUDIOPROCESS
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:1031H         PUBLIC        _PCM_To_Freq
+  -------         PROC          _PCM_TO_FREQ
+  D:0007H         SYMBOL        pcm_data
+  C:1031H         LINE#         4
+  C:1031H         LINE#         6
+  C:1049H         LINE#         7
+  -------         ENDPROC       _PCM_TO_FREQ
+  -------         ENDMOD        AUDIOPROCESS
+
+  -------         MODULE        BUZZER
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  B:00A0H.5       PUBLIC        Buzzer
+  C:0DBAH         PUBLIC        _Buzzer_PlayNote
+  C:0C62H         SYMBOL        keySignatureMap
+  C:0D16H         SYMBOL        _GetActualFrequency
+  B:0020H.0       PUBLIC        Buzzer_Playing
+  C:0C5EH         SYMBOL        SEMITONE_RATIO
+  B:0088H.4       PUBLIC        TR0
+  D:0029H         SYMBOL        currentBPM
+  D:002BH         SYMBOL        currentKeySignature
+  C:0FC5H         SYMBOL        _CalculateTimerReload
+  C:1092H         PUBLIC        _Buzzer_SetBPM
+  D:002CH         PUBLIC        Buzzer_Freq
+  C:10A0H         PUBLIC        _Buzzer_SetKeySignature
+  C:0F3BH         SYMBOL        _CalculateNoteDuration
+  C:104AH         PUBLIC        _Buzzer_Init
+  -------         PROC          _BUZZER_INIT
+  D:0006H         SYMBOL        bpm
+  D:0005H         SYMBOL        keySignature
+  C:104AH         LINE#         50
+  C:104AH         LINE#         51
+  C:104AH         LINE#         52
+  C:1057H         LINE#         53
+  C:105FH         LINE#         54
+  C:1061H         LINE#         55
+  -------         ENDPROC       _BUZZER_INIT
+  -------         PROC          _BUZZER_SETKEYSIGNATURE
+  D:0007H         SYMBOL        keySignature
+  C:10A0H         LINE#         58
+  C:10A0H         LINE#         59
+  C:10A0H         LINE#         60
+  C:10A6H         LINE#         61
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 4
+
+
+  C:10A6H         LINE#         62
+  C:10A8H         LINE#         63
+  C:10A8H         LINE#         64
+  -------         ENDPROC       _BUZZER_SETKEYSIGNATURE
+  -------         PROC          _BUZZER_SETBPM
+  D:0006H         SYMBOL        bpm
+  C:1092H         LINE#         67
+  C:1092H         LINE#         68
+  C:1092H         LINE#         69
+  C:109BH         LINE#         70
+  C:109BH         LINE#         71
+  C:109FH         LINE#         72
+  C:109FH         LINE#         73
+  -------         ENDPROC       _BUZZER_SETBPM
+  -------         PROC          _CALCULATENOTEDURATION
+  D:002EH         SYMBOL        noteType
+  -------         DO            
+  D:0006H         SYMBOL        beatDuration
+  D:0004H         SYMBOL        duration
+  -------         ENDDO         
+  C:0F3BH         LINE#         76
+  C:0F3FH         LINE#         77
+  C:0F3FH         LINE#         78
+  C:0F53H         LINE#         79
+  C:0F6CH         LINE#         81
+  C:0F71H         LINE#         82
+  C:0F71H         LINE#         83
+  C:0F7CH         LINE#         84
+  C:0F7CH         LINE#         86
+  C:0F80H         LINE#         87
+  -------         ENDPROC       _CALCULATENOTEDURATION
+  -------         PROC          _GETACTUALFREQUENCY
+  D:0015H         SYMBOL        baseFrequency
+  D:0019H         SYMBOL        noteName
+  -------         DO            
+  D:001AH         SYMBOL        i
+  D:001BH         SYMBOL        offset
+  D:001CH         SYMBOL        actualFreq
+  -------         ENDDO         
+  C:0D16H         LINE#         90
+  C:0D1EH         LINE#         91
+  C:0D1EH         LINE#         92
+  C:0D21H         LINE#         93
+  C:0D3FH         LINE#         94
+  C:0D47H         LINE#         97
+  C:0D4EH         LINE#         98
+  C:0D4EH         LINE#         99
+  C:0D5EH         LINE#         100
+  C:0D5EH         LINE#         101
+  C:0D77H         LINE#         102
+  C:0D7BH         LINE#         103
+  C:0D7BH         LINE#         104
+  C:0D84H         LINE#         105
+  C:0D84H         LINE#         106
+  C:0D94H         LINE#         107
+  C:0D94H         LINE#         108
+  C:0DADH         LINE#         109
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 5
+
+
+  C:0DB1H         LINE#         110
+  C:0DB1H         LINE#         112
+  C:0DB9H         LINE#         113
+  -------         ENDPROC       _GETACTUALFREQUENCY
+  -------         PROC          _CALCULATETIMERRELOAD
+  D:0002H         SYMBOL        freq
+  -------         DO            
+  D:0021H         SYMBOL        clock
+  D:0025H         SYMBOL        reload
+  -------         ENDDO         
+  C:0FC5H         LINE#         115
+  C:0FC5H         LINE#         116
+  C:0FD1H         LINE#         117
+  C:0FF3H         LINE#         118
+  C:0FFAH         LINE#         119
+  -------         ENDPROC       _CALCULATETIMERRELOAD
+  -------         PROC          _BUZZER_PLAYNOTE
+  D:0008H         SYMBOL        baseFrequency
+  D:000CH         SYMBOL        noteName
+  D:000DH         SYMBOL        noteType
+  -------         DO            
+  D:000FH         SYMBOL        actualFrequency
+  D:0013H         SYMBOL        duration
+  D:0006H         SYMBOL        reload
+  -------         ENDDO         
+  C:0DBAH         LINE#         125
+  C:0DC2H         LINE#         126
+  C:0DC2H         LINE#         132
+  C:0DD6H         LINE#         133
+  C:0DD6H         LINE#         134
+  C:0DDBH         LINE#         135
+  C:0DDEH         LINE#         137
+  C:0DDEH         LINE#         142
+  C:0DF2H         LINE#         143
+  C:0DF2H         LINE#         145
+  C:0DF4H         LINE#         146
+  C:0DF6H         LINE#         147
+  C:0DF8H         LINE#         148
+  C:0E03H         LINE#         149
+  C:0E06H         LINE#         150
+  C:0E08H         LINE#         152
+  C:0E08H         LINE#         155
+  C:0E1EH         LINE#         156
+  C:0E29H         LINE#         157
+  C:0E37H         LINE#         160
+  C:0E3BH         LINE#         161
+  C:0E3DH         LINE#         162
+  C:0E3FH         LINE#         165
+  C:0E46H         LINE#         168
+  C:0E48H         LINE#         169
+  C:0E4AH         LINE#         170
+  C:0E4CH         LINE#         173
+  C:0E53H         LINE#         174
+  -------         ENDPROC       _BUZZER_PLAYNOTE
+  -------         ENDMOD        BUZZER
+
+  -------         MODULE        TIMER0
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 6
+
+
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  C:0FFBH         PUBLIC        Timer0_Routine
+  D:00A0H         PUBLIC        P2
+  B:00A0H.5       PUBLIC        Buzzer
+  B:00A8H.7       PUBLIC        EA
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.1       PUBLIC        ET0
+  B:0088H.5       PUBLIC        TF0
+  C:1083H         PUBLIC        Timer0Init
+  D:008CH         PUBLIC        TH0
+  D:008AH         PUBLIC        TL0
+  B:0088H.4       PUBLIC        TR0
+  -------         PROC          TIMER0INIT
+  C:1083H         LINE#         11
+  C:1083H         LINE#         12
+  C:1083H         LINE#         13
+  C:1086H         LINE#         14
+  C:1089H         LINE#         15
+  C:108BH         LINE#         16
+  C:108DH         LINE#         17
+  C:108FH         LINE#         18
+  C:1091H         LINE#         19
+  -------         ENDPROC       TIMER0INIT
+  -------         PROC          TIMER0_ROUTINE
+  C:0FFBH         LINE#         22
+  C:0FFDH         LINE#         23
+  C:1006H         LINE#         25
+  C:1009H         LINE#         26
+  C:100DH         LINE#         27
+  C:100FH         LINE#         28
+  C:1011H         LINE#         29
+  C:1013H         LINE#         30
+  C:1013H         LINE#         31
+  -------         ENDPROC       TIMER0_ROUTINE
+  -------         ENDMOD        TIMER0
+
+  -------         MODULE        UART
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  D:00A0H         PUBLIC        P2
+  D:0030H         PUBLIC        g_pcm_data
+  B:00A8H.7       PUBLIC        EA
+  C:1016H         PUBLIC        Uart_Init
+  B:00A8H.4       PUBLIC        ES
+  B:0098H.0       PUBLIC        RI
+  B:0098H.1       PUBLIC        TI
+  C:10A9H         PUBLIC        _Uart_SendByte
+  D:0099H         PUBLIC        SBUF
+  D:0087H         PUBLIC        PCON
+  D:0098H         PUBLIC        SCON
+  D:0089H         PUBLIC        TMOD
+  B:00A8H.3       PUBLIC        ET1
+  D:008DH         PUBLIC        TH1
+  D:008BH         PUBLIC        TL1
+  B:0088H.4       PUBLIC        TR0
+  B:0088H.6       PUBLIC        TR1
+  C:0EE0H         PUBLIC        Uart_Routine
+  -------         PROC          UART_INIT
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 7
+
+
+  C:1016H         LINE#         15
+  C:1016H         LINE#         16
+  C:1016H         LINE#         17
+  C:1019H         LINE#         18
+  C:101CH         LINE#         19
+  C:101FH         LINE#         20
+  C:1022H         LINE#         21
+  C:1025H         LINE#         22
+  C:1028H         LINE#         23
+  C:102AH         LINE#         24
+  C:102CH         LINE#         25
+  C:102EH         LINE#         26
+  C:1030H         LINE#         27
+  -------         ENDPROC       UART_INIT
+  -------         PROC          _UART_SENDBYTE
+  D:0007H         SYMBOL        Byte
+  C:10A9H         LINE#         36
+  C:10A9H         LINE#         39
+  C:10ABH         LINE#         41
+  C:10AEH         LINE#         43
+  C:10B0H         LINE#         45
+  -------         ENDPROC       _UART_SENDBYTE
+  -------         PROC          UART_ROUTINE
+  -------         DO            
+  D:0006H         SYMBOL        freq
+  -------         ENDDO         
+  C:0EE0H         LINE#         49
+  C:0EFDH         LINE#         51
+  C:0F00H         LINE#         52
+  C:0F03H         LINE#         53
+  C:0F05H         LINE#         54
+  C:0F08H         LINE#         57
+  C:0F0DH         LINE#         58
+  C:0F1CH         LINE#         59
+  C:0F1EH         LINE#         60
+  C:0F20H         LINE#         61
+  C:0F20H         LINE#         62
+  -------         ENDPROC       UART_ROUTINE
+  -------         ENDMOD        UART
+
+  -------         MODULE        ?C?FPMUL
+  C:0800H         PUBLIC        ?C?FPMUL
+  -------         ENDMOD        ?C?FPMUL
+
+  -------         MODULE        ?C?FPDIV
+  C:0909H         PUBLIC        ?C?FPDIV
+  -------         ENDMOD        ?C?FPDIV
+
+  -------         MODULE        ?C?FPCMP
+  C:09A8H         PUBLIC        ?C?FPCMP
+  C:09A6H         PUBLIC        ?C?FPCMP3
+  -------         ENDMOD        ?C?FPCMP
+
+  -------         MODULE        ?C?FCAST
+  C:0A29H         PUBLIC        ?C?FCASTC
+  C:0A24H         PUBLIC        ?C?FCASTI
+  C:0A1FH         PUBLIC        ?C?FCASTL
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 8
+
+
+  -------         ENDMOD        ?C?FCAST
+
+  -------         MODULE        ?C?CASTF
+  C:0A5DH         PUBLIC        ?C?CASTF
+  -------         ENDMOD        ?C?CASTF
+
+  -------         MODULE        ?C?IMUL
+  C:0ADEH         PUBLIC        ?C?IMUL
+  -------         ENDMOD        ?C?IMUL
+
+  -------         MODULE        ?C?UIDIV
+  C:0AF0H         PUBLIC        ?C?UIDIV
+  -------         ENDMOD        ?C?UIDIV
+
+  -------         MODULE        ?C?ULDIV
+  C:0B81H         PUBLIC        ?C?ULDIV
+  -------         ENDMOD        ?C?ULDIV
+
+  -------         MODULE        ?C?SLDIV
+  C:0F81H         PUBLIC        ?C?SLDIV
+  -------         ENDMOD        ?C?SLDIV
+
+  -------         MODULE        ?C?LNEG
+  C:0C13H         PUBLIC        ?C?LNEG
+  -------         ENDMOD        ?C?LNEG
+
+  -------         MODULE        ?C?LLDCODE0
+  C:0C21H         PUBLIC        ?C?LLDCODE0
+  -------         ENDMOD        ?C?LLDCODE0
+
+  -------         MODULE        ?C?LIMUL
+  C:0C31H         PUBLIC        ?C?LIMUL
+  -------         ENDMOD        ?C?LIMUL
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_BUZZER_SETKEYSIGNATURE?BUZZER
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_BUZZER_SETBPM?BUZZER
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_BUZZER_PLAYNOTE?BUZZER
+
+*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
+    SEGMENT: ?PR?_UART_SENDBYTE?UART
+
+*** WARNING L1: UNRESOLVED EXTERNAL SYMBOL
+    SYMBOL:  _DELAY1MS
+    MODULE:  .\Objects\Buzzer.obj (BUZZER)
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DELAY1MS
+    MODULE:  .\Objects\Buzzer.obj (BUZZER)
+    ADDRESS: 0E04H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DELAY1MS
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  08/09/2025  13:42:23  PAGE 9
+
+
+    MODULE:  .\Objects\Buzzer.obj (BUZZER)
+    ADDRESS: 0E44H
+
+*** WARNING L2: REFERENCE MADE TO UNRESOLVED EXTERNAL
+    SYMBOL:  _DELAY1MS
+    MODULE:  .\Objects\Buzzer.obj (BUZZER)
+    ADDRESS: 0E51H
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 0388H BYTE (44%) *
+******************************************************************************
+
+Program Size: data=49.1 xdata=0 code=2234
+LINK/LOCATE RUN COMPLETE.  8 WARNING(S),  0 ERROR(S)

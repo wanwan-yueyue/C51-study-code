@@ -1,0 +1,107 @@
+C51 COMPILER V9.60.7.0   UART                                                              08/09/2025 13:42:23 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE UART
+OBJECT MODULE PLACED IN .\Objects\Uart.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE Uart.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\Uar
+                    -t.lst) TABS(2) OBJECT(.\Objects\Uart.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Buzzer.h"
+   3          #include "AudioProcess.h"
+   4          
+   5          // 全局变量：存储当前音频数据
+   6          unsigned char g_pcm_data = 0;
+   7          
+   8          /*
+   9          函数名：Uart_Init
+  10          功能：串口初始化
+  11          输入：无
+  12          输出：无
+  13          注意：9600bps@11.0592MHz
+  14          */
+  15          void Uart_Init(void)  // 9600bps@11.0592MHz（修改波特率以匹配数据传输）
+  16          {
+  17   1          PCON &= 0x7F;   // 波特率不倍速
+  18   1          SCON = 0x50;    // 8位数据，允许接收
+  19   1          TMOD &= 0x0F;   // 清除定时器1配置
+  20   1          TMOD |= 0x20;   // 定时器1工作在方式2（自动重装载）
+  21   1          TL1 = 0xFD;     // 9600bps初值（11.0592MHz）
+  22   1          TH1 = 0xFD;     
+  23   1          ET1 = 0;      // 禁止定时器1中断
+  24   1          TR1 = 1;      // 启动定时器1
+  25   1          EA = 1;       // 允许总中断
+  26   1          ES = 1;       // 允许串口中断
+  27   1      }
+  28          
+  29          
+  30          /*
+  31          函数名：Uart_SendByte
+  32          功能：向串口数据缓存寄存器写入一个字节的数据
+  33          输入：Byte 要输入的那一个字节的数据
+  34          输出：无
+  35          */
+  36          void Uart_SendByte(unsigned char Byte){
+  37   1        
+  38   1        //将字节写入串口数据缓存寄存器
+  39   1        SBUF = Byte;
+  40   1        //检查是否写入,发送请求中断标志位置1时继续下一步
+  41   1        while(TI == 0);
+  42   1        //复位TI
+  43   1        TI = 0;
+  44   1        
+  45   1      }
+  46          
+  47          
+  48          // 串口接收中断：实时处理PCM数据
+  49          void Uart_Routine() interrupt 4 {
+  50   1          unsigned int freq;
+  51   1          if(RI) {  // 接收完成
+  52   2              P2 = ~P2;  //LED调试
+  53   2              RI = 0;  // 清除标志位
+  54   2              g_pcm_data = SBUF;  // 读取PCM数据（0~255）
+C51 COMPILER V9.60.7.0   UART                                                              08/09/2025 13:42:23 PAGE 2   
+
+  55   2              
+  56   2              // 转换为蜂鸣器频率并更新定时器
+  57   2              freq = PCM_To_Freq(g_pcm_data);
+  58   2              Buzzer_Freq = CalculateTimerReload(freq);  // 复用蜂鸣器模块的初值计算函数
+  59   2              Buzzer_Playing = 1;  // 启动蜂鸣器
+  60   2              TR0 = 1;  // 确保定时器0启动
+  61   2          }
+  62   1      }
+  63          
+  64          
+  65          /*
+  66          
+  67          //串口中断函数
+  68          void Uart_Routine() interrupt 4
+  69          {
+  70            //判断是不是接收中断
+  71            if(RI == 1){
+  72              
+  73              //P2 = ~SBUF;
+  74              
+  75              //接收中断请求标志位RI置零复位
+  76              RI = 0;
+  77              
+  78            }
+  79            
+  80          }
+  81          */
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    126    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      1    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

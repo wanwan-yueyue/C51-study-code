@@ -1,0 +1,31 @@
+C51 COMPILER V9.60.7.0   AUDIOPROCESS                                                      08/08/2025 22:48:44 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE AUDIOPROCESS
+OBJECT MODULE PLACED IN .\Objects\AudioProcess.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE AudioProcess.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\List
+                    -ings\AudioProcess.lst) TABS(2) OBJECT(.\Objects\AudioProcess.obj)
+
+line level    source
+
+   1          #include "AudioProcess.h"
+   2          
+   3          // 将8位PCM数据（0~255）映射到500~3000Hz
+   4          unsigned int PCM_To_Freq(unsigned char pcm_data) {
+   5   1          // 线性映射公式：freq = MIN_FREQ + (pcm_data * (MAX_FREQ - MIN_FREQ) / PCM_MAX)
+   6   1          return MIN_FREQ + (pcm_data * (MAX_FREQ - MIN_FREQ)) / PCM_MAX;
+   7   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     25    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

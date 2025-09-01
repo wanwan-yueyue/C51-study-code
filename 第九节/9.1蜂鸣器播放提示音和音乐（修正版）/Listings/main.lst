@@ -1,0 +1,250 @@
+C51 COMPILER V9.60.7.0   MAIN                                                              08/08/2025 17:06:00 PAGE 1   
+
+
+C51 COMPILER V9.60.7.0, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\Objects\main.obj
+COMPILER INVOKED BY: C:\keil_C51\C51\BIN\C51.EXE main.c OPTIMIZE(8,SPEED) BROWSE DEBUG OBJECTEXTEND PRINT(.\Listings\mai
+                    -n.lst) TABS(2) OBJECT(.\Objects\main.obj)
+
+line level    source
+
+   1          #include <REGX52.H>
+   2          #include "Key.h"
+   3          #include "nixie.h"
+   4          #include "Buzzer.h"
+   5          #include "delay.h"
+   6          #include "Timer0.h"
+   7          
+   8          
+   9          unsigned char KeyNum, i = 0;
+  10          
+  11          // 定义结构体，格式：{基础频率, 音名, 音符类型}
+  12          typedef struct {
+  13              float freq;
+  14              NoteName name;
+  15              unsigned int type;
+  16          } Note;
+  17          
+  18          // 答案音符序列（C大调）
+  19          const Note code answer[] = {
+  20            //有个简单的问题，
+  21              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  22              {a1,  NOTE_A,  SIXTEENTH_NOTE},    // 6
+  23              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  24              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  25              {c2,  NOTE_C,  SIXTEENTH_NOTE},    // 1(HIGH1)
+  26              {g1,  NOTE_A,  EIGHTH_NOTE},     // 6
+  27              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  28              {g1,  NOTE_G,  HALF_NOTE},     // 5
+  29              
+  30            //什么是爱情？
+  31              {g1,  NOTE_G,  EIGHTH_NOTE},     // 5
+  32              {g1,  NOTE_G,  EIGHTH_NOTE},     // 5
+  33              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  34              {e1,  NOTE_E,  DOT_EIGHTH_NOTE},     // 3
+  35              {c1,  NOTE_C,  QUARTER_NOTE},     // 1
+  36              {0,   NOTE_C,  QUARTER_NOTE},     // 0
+  37              
+  38            //它是否是一种味道还是引力？
+  39              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  40              {a1,  NOTE_A,  SIXTEENTH_NOTE},    // 6
+  41              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  42              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  43              {c2,  NOTE_C,  SIXTEENTH_NOTE},    // 1(HIGH1)
+  44              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+  45              {g1,  NOTE_G,  EIGHTH_NOTE},     // 5
+  46              {g1,  NOTE_G,  EIGHTH_NOTE},     // 5
+  47              
+  48              {a1,  NOTE_A,  EIGHTH_NOTE},     // 6
+  49              {g1,  NOTE_G,  EIGHTH_NOTE},     // 5
+  50              {a1,  NOTE_A,  EIGHTH_NOTE},     // 6
+  51              {e1,  NOTE_E,  DOT_QUARTER_NOTE},     // 3
+  52              {0,   NOTE_C,  EIGHTH_NOTE},      // 0
+  53              
+  54            //从我初恋那天起，
+C51 COMPILER V9.60.7.0   MAIN                                                              08/08/2025 17:06:00 PAGE 2   
+
+  55              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  56              {a1,  NOTE_A,  SIXTEENTH_NOTE},    // 6
+  57              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  58              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  59              
+  60              {c2,  NOTE_C,  SIXTEENTH_NOTE},    // 1(HIGH1)
+  61              {g1,  NOTE_A,  EIGHTH_NOTE},     // 6
+  62              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  63              {g1,  NOTE_G,  HALF_NOTE},     // 5
+  64              {0,   NOTE_C,  QUARTER_NOTE},     // 0
+  65              
+  66            //先是甜蜜然后紧接就会有风雨，
+  67              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+  68              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+  69              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+  70              {c2,  NOTE_C,  DOT_QUARTER_NOTE},    // 1(HIGH1)
+  71              
+  72              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  73              {a1,  NOTE_A,  SIXTEENTH_NOTE},    // 6
+  74              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  75              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  76              {c2,  NOTE_C,  SIXTEENTH_NOTE},    // 1(HIGH1)
+  77              {g1,  NOTE_A,  EIGHTH_NOTE},     // 6
+  78              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  79              {g1,  NOTE_G,  QUARTER_NOTE},    // 5
+  80              {g1,  NOTE_A,  EIGHTH_NOTE},     // 6
+  81              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  82              {c2,  NOTE_C,  DOT_HALF_NOTE},     // 1(HIGH1)
+  83            
+  84            //爱就像蓝天白云晴空万里
+  85              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+  86              {a1,  NOTE_A,  SIXTEENTH_NOTE},    // 6
+  87              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  88              
+  89              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+  90              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+  91              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+  92              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  93              
+  94              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+  95              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+  96              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+  97              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+  98              
+  99            //突然暴风雨
+ 100              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+ 101              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 102              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 103              {g2,  NOTE_G,  QUARTER_NOTE},    // 5(HIGH1)
+ 104              {e2,  NOTE_E,  DOT_QUARTER_NOTE},    // 3(HIGH1)
+ 105              
+ 106            //无处躲避总是让人始料不及
+ 107              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+ 108              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 109              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+ 110              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 111              
+ 112              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+ 113              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 114              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+ 115              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 116              
+C51 COMPILER V9.60.7.0   MAIN                                                              08/08/2025 17:06:00 PAGE 3   
+
+ 117              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+ 118              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 119              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+ 120              {c2,  NOTE_C,  DOT_QUARTER_NOTE},    // 1(HIGH1)
+ 121              
+ 122            //人就像患重感冒打着喷嚏
+ 123              {g1,  NOTE_G,  SIXTEENTH_NOTE},    // 5
+ 124              {a1,  NOTE_A,  SIXTEENTH_NOTE},    // 6
+ 125              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 126              
+ 127              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+ 128              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 129              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+ 130              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 131              
+ 132              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+ 133              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 134              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+ 135              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 136              
+ 137            //发烧要休息
+ 138              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+ 139              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 140              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 141              {g2,  NOTE_G,  QUARTER_NOTE},    // 5(HIGH1)
+ 142              {e2,  NOTE_E,  DOT_QUARTER_NOTE},    // 3(HIGH1)
+ 143              
+ 144            //冷热交替欢喜犹豫乐此不疲
+ 145              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+ 146              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 147              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+ 148              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 149              
+ 150              {d2,  NOTE_D,  SIXTEENTH_NOTE},    // 2(HIGH1)
+ 151              {e2,  NOTE_E,  EIGHTH_NOTE},     // 3(HIGH1)
+ 152              {a1,  NOTE_A,  DOT_EIGHTH_NOTE},     // 6
+ 153              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 154              
+ 155              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+ 156              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 157              {d2,  NOTE_D,  EIGHTH_NOTE},     // 2(HIGH1)
+ 158              {c2,  NOTE_C,  EIGHTH_NOTE},     // 1(HIGH1)
+ 159              {c2,  NOTE_C,  HALF_NOTE},     // 1(HIGH1)
+ 160                
+ 161              {0,   NOTE_C,  0}                // 结束标志
+ 162          };
+ 163          
+ 164          
+ 165          void main(){
+ 166   1        
+ 167   1        //蜂鸣器初始化,设置调号为C大调,指定bpm = 120
+ 168   1        Buzzer_Init(120, C_MAJOR);
+ 169   1        //定时器初始化
+ 170   1        Timer0Init();
+ 171   1        
+ 172   1        NixieDisplay(1,0);
+ 173   1        
+ 174   1        while(1){
+ 175   2          
+ 176   2          KeyNum = Key();
+ 177   2          if(KeyNum == 1){
+ 178   3              NixieDisplay(1,1);
+C51 COMPILER V9.60.7.0   MAIN                                                              08/08/2025 17:06:00 PAGE 4   
+
+ 179   3              // 播放旋律
+ 180   3              Buzzer_SetBPM(148);   //设定BPM为74
+ 181   3              Buzzer_SetKeySignature(C_MAJOR);   //修改调号为C大调
+ 182   3              if(TR0 == 0){TR0 = 1;}  //启动定时器
+ 183   3              while(answer[i].freq != 0 || answer[i].type != 0) {
+ 184   4                  Buzzer_PlayNote(
+ 185   4                      answer[i].freq, 
+ 186   4                      answer[i].name, 
+ 187   4                      answer[i].type
+ 188   4                  );
+ 189   4                  // 音符间短暂停顿（避免连音）
+ 190   4                  // Delay1ms(50);
+ 191   4                  i++;
+ 192   4              }
+ 193   3          }
+ 194   2      //    if(KeyNum == 2){
+ 195   2      //        NixieDisplay(1,2);
+ 196   2      //        // 播放旋律
+ 197   2      //        Buzzer_SetBPM(103);   //设定BPM为103
+ 198   2      //        Buzzer_SetKeySignature(F_MAJOR);   //修改调号为F大调
+ 199   2      //        if(TR0 == 0){TR0 = 1;}  //启动定时器
+ 200   2      //        while(bugsFly[i].freq != 0) {
+ 201   2      //            Buzzer_PlayNote(
+ 202   2      //                bugsFly[i].freq, 
+ 203   2      //                bugsFly[i].name, 
+ 204   2      //                bugsFly[i].type
+ 205   2      //            );
+ 206   2      //            // 音符间短暂停顿（避免连音）
+ 207   2      //            // Delay1ms(50);
+ 208   2      //            i++;
+ 209   2      //        }
+ 210   2      //    }
+ 211   2          if(KeyNum == 4){
+ 212   3              NixieDisplay(1,4);
+ 213   3              //重新开始
+ 214   3              if(TR0 == 1){TR0 = 0;}  //关闭定时器
+ 215   3              i = 0;
+ 216   3          }
+ 217   2          
+ 218   2        }
+ 219   1        
+ 220   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    208    ----
+   CONSTANT SIZE    =    763    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =      2    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
